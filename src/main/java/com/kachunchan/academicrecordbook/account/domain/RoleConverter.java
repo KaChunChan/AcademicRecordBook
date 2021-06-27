@@ -1,4 +1,4 @@
-package com.kachunchan.academicrecordbook.account;
+package com.kachunchan.academicrecordbook.account.domain;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

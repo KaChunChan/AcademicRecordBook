@@ -1,15 +1,15 @@
-package com.kachunchan.academicrecordbook.account;
+package com.kachunchan.academicrecordbook.account.repository;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.kachunchan.academicrecordbook.account.domain.Account;
+import com.kachunchan.academicrecordbook.account.domain.Role;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
 @DataJpaTest
 public class AccountRepositoryTest {
 
@@ -22,16 +22,16 @@ public class AccountRepositoryTest {
     @Test
     public void whenRetrievingAValidAndExistingAccount_ThenReturnAccount() {
         Account stubbedAccount = new Account("forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
-        Account expectedAccount = new Account(1L,"forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
         // The account should automatically assign an ID so ID is omitted in stubbedAccount.
-        entityManager.persistFlushFind(stubbedAccount);
+        Long persistedID = entityManager.persistAndGetId(stubbedAccount, Long.class);
+        Account expectedAccount = new Account(persistedID.longValue(),"forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
         Account account = repository.getAnAccountByUsername("username");
-        assertThat(account.equals(expectedAccount));
+        assertEquals(expectedAccount, account);
     }
 
     @Test
     public void whenRetrievingANonExistingAccount_ThenReturnNull() {
         Account account = repository.getAnAccountByUsername("username");
-        assertThat(account == null);
+        assertNull(account);
     }
 }
