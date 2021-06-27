@@ -5,33 +5,30 @@ import com.kachunchan.academicrecordbook.account.domain.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
+@TestPropertySource(locations = {"classpath:test.properties"})
+@Sql(scripts={"classpath:schema-test.sql","classpath:data-test.sql"})
 public class AccountRepositoryTest {
 
     @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
-    private AccountRepository repository;
+    public AccountRepository accountRepository;
 
     @Test
     public void whenRetrievingAValidAndExistingAccount_ThenReturnAccount() {
-        Account stubbedAccount = new Account("forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
-        // The account should automatically assign an ID so ID is omitted in stubbedAccount.
-        Long persistedID = entityManager.persistAndGetId(stubbedAccount, Long.class);
-        Account expectedAccount = new Account(persistedID.longValue(),"forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
-        Account account = repository.getAnAccountByUsername("username");
-        assertEquals(expectedAccount, account);
+        Account retrievedAccount = accountRepository.getAnAccountByUsername("jillbill");
+        Account expectedAccount = new Account(3, "Jill", "Bill", "jillbill","jill.bill@email.com","jill", Role.STUDENT);
+        assertEquals(expectedAccount, retrievedAccount);
     }
 
     @Test
     public void whenRetrievingANonExistingAccount_ThenReturnNull() {
-        Account account = repository.getAnAccountByUsername("username");
+        Account account = accountRepository.getAnAccountByUsername("username");
         assertNull(account);
     }
 }

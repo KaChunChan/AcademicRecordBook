@@ -1,12 +1,13 @@
+DELETE FROM ACCOUNT;
 INSERT INTO
     ACCOUNT (forename, surname, username, email, password, role)
 VALUES
-    ('myForename', 'mySurname', 'myUsername', 'myEmail', 'myPassword', 'A');
+    ('James', 'Brown', 'jamesbrown', 'james.brown@email.com', 'james', 'A');
 INSERT INTO
     ACCOUNT (forename, surname, username, email, password, role)
 VALUES
-    ('John', 'Doe', 'johndoe', 'john.doe@email.com', 'john', 'I');
+    ('Mary', 'Hill', 'mary.hill', 'mary.hill@email.com', 'mary', 'I');
 INSERT INTO
     ACCOUNT (forename, surname, username, email, password, role)
 VALUES
-    ('Jane', 'Smith', 'janesmith', 'jane.smith@email.com', 'jane', 'S');
+    ('Jill', 'Bill', 'jillbill', 'jill.bill@email.com', 'jill', 'S');
