@@ -1,29 +1,28 @@
-package com.kachunchan.academicrecordbook.account.controller;
+package com.kachunchan.academicrecordbook.controller;
 
-import com.kachunchan.academicrecordbook.account.domain.Account;
-import com.kachunchan.academicrecordbook.account.domain.Role;
-import com.kachunchan.academicrecordbook.account.exception.AccountDoesNotExistException;
-import com.kachunchan.academicrecordbook.account.service.AccountServiceImpl;
+import com.kachunchan.academicrecordbook.domain.Account;
+import com.kachunchan.academicrecordbook.domain.Role;
+import com.kachunchan.academicrecordbook.service.AccountServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AccountController.class)
 @TestPropertySource(locations = "classpath:test.properties")
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 public class AccountControllerTest {
 
     @Autowired
@@ -31,17 +30,16 @@ public class AccountControllerTest {
 
     @MockBean
     private AccountServiceImpl accountService;
-
     @MockBean
     private UserDetailsService userDetailsService;
 
     @Test
-    @PreAuthorize("authenticated")
-    public void whenGettingAccountAndAccountExist_ThenReturnAccount() throws Exception {
+    @WithMockUser("username")
+    @AutoConfigureMockMvc(addFilters = false)
+    public void givenAlreadyLoggedInUser_whenGoingToAccountPageUsingGet_thenReturnAccountDetails() throws Exception {
         Account stubAccount = new Account(1L, "forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
-        when(accountService.getAnAccount(anyString())).thenReturn(stubAccount);
-
-        mockMvc.perform(get("/{username}/account", "username"))
+        when(accountService.getAnAccount(SecurityContextHolder.getContext().getAuthentication().getName())).thenReturn(stubAccount);
+        mockMvc.perform(get("/account"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account"))
                 .andExpect(forwardedUrl("/WEB-INF/view/account.jsp"))
@@ -55,10 +53,10 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void whenGettingAccountAndAccountDoesNotExist_ThenThrowException() throws Exception {
-        when(accountService.getAnAccount(anyString())).thenThrow(new AccountDoesNotExistException());
-
-        mockMvc.perform(get("/{username}", "username"))
-                .andExpect(status().isNotFound());
+    public void givenNotLoggedInUser_whenManuallyEnteringAccountPageUsingGet_thenRedirectToLoginPage() throws Exception {
+        mockMvc.perform(get("/account"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
+
 }

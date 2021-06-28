@@ -5,6 +5,8 @@
     <title>Account</title>
 </head>
 <body>
+    <jsp:include page="header.jsp"/>
+    <p>
     <p>Hello ${account.forename} ${account.surname}</p>
     <p>Your username is ${account.username}</p>
     <p>Your password is ${account.password}</p>

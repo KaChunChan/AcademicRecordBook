@@ -1,7 +1,7 @@
-package com.kachunchan.academicrecordbook.account.repository;
+package com.kachunchan.academicrecordbook.repository;
 
-import com.kachunchan.academicrecordbook.account.domain.Account;
-import com.kachunchan.academicrecordbook.account.domain.Role;
+import com.kachunchan.academicrecordbook.domain.Account;
+import com.kachunchan.academicrecordbook.domain.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,14 +20,14 @@ public class AccountRepositoryTest {
     public AccountRepository accountRepository;
 
     @Test
-    public void whenRetrievingAValidAndExistingAccount_ThenReturnAccount() {
+    public void givenAValidExistingUsername_whenRetrievingTheAccountByTheUsername_thenReturnAccount() {
         Account retrievedAccount = accountRepository.getAnAccountByUsername("jillbill");
         Account expectedAccount = new Account(3, "Jill", "Bill", "jillbill","jill.bill@email.com","jill", Role.STUDENT);
         assertEquals(expectedAccount, retrievedAccount);
     }
 
     @Test
-    public void whenRetrievingANonExistingAccount_ThenReturnNull() {
+    public void givenANonExistingUsername_whenRetrievingTheAccountByTheUsername_ThenReturnNull() {
         Account account = accountRepository.getAnAccountByUsername("username");
         assertNull(account);
     }

@@ -1,5 +1,6 @@
-package com.kachunchan.academicrecordbook.security.config;
+package com.kachunchan.academicrecordbook.security;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -26,15 +27,22 @@ public class SecurityWebConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().permitAll()
-                .and()
-                .logout().permitAll()
-                .and()
-                .httpBasic();
+                .authorizeRequests((authorize) -> authorize
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .antMatchers("/", "/academicrecordbook").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin((formLogin) -> formLogin
+                        .loginPage("/login")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .permitAll()
+                        .failureUrl("/login?error=true")
+                        .successForwardUrl("/to-account")
+                ).logout((logout) -> logout
+                        .permitAll()
+                        .logoutSuccessUrl("/login?logout=true")
+        );
     }
 
     @Override

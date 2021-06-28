@@ -1,8 +1,8 @@
-package com.kachunchan.academicrecordbook.security.service;
+package com.kachunchan.academicrecordbook.service;
 
-import com.kachunchan.academicrecordbook.account.domain.Account;
-import com.kachunchan.academicrecordbook.account.domain.Role;
-import com.kachunchan.academicrecordbook.account.repository.AccountRepository;
+import com.kachunchan.academicrecordbook.domain.Account;
+import com.kachunchan.academicrecordbook.domain.Role;
+import com.kachunchan.academicrecordbook.repository.AccountRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ public class SecurityLoginServiceTest {
     }
 
     @Test
-    public void whenLoadUserByUsernameWithValidCredientails_ThenReturnUserDetails(){
+    public void givenAValidExistingUsername_whenLoadUserByUsername_thenReturnUserDetails(){
         UserDetails expected = User.withUsername("dummy").password("password").authorities("ADMINISTRATOR").build();
         Account stubbedAccount = new Account ("dummyForename", "dummyForename", "dummy", "dummy@email", "password", Role.ADMINISTRATOR);
         when(accountRepository.getAnAccountByUsername(anyString())).thenReturn(stubbedAccount);

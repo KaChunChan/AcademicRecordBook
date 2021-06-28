@@ -1,6 +1,6 @@
-package com.kachunchan.academicrecordbook.account.repository;
+package com.kachunchan.academicrecordbook.repository;
 
-import com.kachunchan.academicrecordbook.account.domain.Account;
+import com.kachunchan.academicrecordbook.domain.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {

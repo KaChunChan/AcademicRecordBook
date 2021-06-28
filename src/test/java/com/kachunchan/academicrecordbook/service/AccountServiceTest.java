@@ -1,9 +1,9 @@
-package com.kachunchan.academicrecordbook.account.service;
+package com.kachunchan.academicrecordbook.service;
 
-import com.kachunchan.academicrecordbook.account.domain.Account;
-import com.kachunchan.academicrecordbook.account.domain.Role;
-import com.kachunchan.academicrecordbook.account.exception.AccountDoesNotExistException;
-import com.kachunchan.academicrecordbook.account.repository.AccountRepository;
+import com.kachunchan.academicrecordbook.domain.Account;
+import com.kachunchan.academicrecordbook.domain.Role;
+import com.kachunchan.academicrecordbook.exception.AccountDoesNotExistException;
+import com.kachunchan.academicrecordbook.repository.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void whenGettingAnValidExistingAccount_ThenReturnAccount() {
+    public void givenAValidExistingUsername_whenGettingAnAccount_thenReturnAccount() {
         Account stubbedAccount = new Account(1L, "forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
         when(accountRepository.getAnAccountByUsername(anyString())).thenReturn(stubbedAccount);
 
@@ -38,7 +38,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void whenGettingANonExistingAccount_ThenThrowAccountDoesNotExistException() {
+    public void givenANonExistingUsername_whenGettingANonExistingAccount_thenThrowAccountDoesNotExistException() {
         when(accountRepository.getAnAccountByUsername(anyString())).thenReturn(null);
         assertThrows(AccountDoesNotExistException.class, () -> service.getAnAccount("username"));
     }
