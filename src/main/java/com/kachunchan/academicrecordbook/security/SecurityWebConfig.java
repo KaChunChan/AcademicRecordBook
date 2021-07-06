@@ -1,5 +1,6 @@
 package com.kachunchan.academicrecordbook.security;
 
+import com.kachunchan.academicrecordbook.domain.Role;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ public class SecurityWebConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests((authorize) -> authorize
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .antMatchers("/", "/academicrecordbook").permitAll()
+                        .antMatchers("/admin", "/admin/**").hasRole(Role.ADMINISTRATOR.getCode())
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin
@@ -42,7 +44,7 @@ public class SecurityWebConfig extends WebSecurityConfigurerAdapter {
                 ).logout((logout) -> logout
                         .permitAll()
                         .logoutSuccessUrl("/login?logout=true")
-        );
+        ).csrf().disable();
     }
 
     @Override

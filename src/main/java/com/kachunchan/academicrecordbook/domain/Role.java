@@ -8,7 +8,7 @@ public enum Role {
 
     private String code;
 
-    private Role(String code) {
+    Role(String code) {
         this.code = code;
     }
 

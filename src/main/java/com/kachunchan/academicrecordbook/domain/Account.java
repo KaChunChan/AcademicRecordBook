@@ -1,12 +1,17 @@
 package com.kachunchan.academicrecordbook.domain;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Data
 @Entity
-@Table(name="ACCOUNT")
+@Table(name = "ACCOUNT")
 public class Account {
 
     @Id
@@ -26,11 +31,7 @@ public class Account {
     @Column
     private Role role;
 
-    public Account() {
-
-    }
-
-    public Account( String forename, String surname, String username, String email, String password, Role role) {
+    public Account(String forename, String surname, String username, String email, String password, Role role) {
         this.forename = forename;
         this.surname = surname;
         this.username = username;
@@ -38,15 +39,4 @@ public class Account {
         this.password = password;
         this.role = role;
     }
-
-    public Account(long id, String forename, String surname, String username, String email, String password, Role role) {
-        this.id = id;
-        this.forename = forename;
-        this.surname = surname;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
 }

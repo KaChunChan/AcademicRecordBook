@@ -26,12 +26,15 @@ This is a learning project for me to learn and use Java and Spring Framework to 
 1. Follow the provided link to install maven. (https://maven.apache.org/install.html)
 
 # User Stories
-* 001 - As an Administrator, I want to log into my account that has administrator privilege, so that I can have access administrator actions.
-* 002 - As an Administrator, I want to log out of my account, so that I can end my session as administrator.
-* 003 - As an Administrator, I want to create new account for another person with roles of Administrator, Instructor, or Student, so that the other person can access their accounts with their allowed actions based on their role.
+  ToDo:
 * 004 - As an Administrator, I want to delete an existing account, so that I can remove that person from the Academic Record Book.
 * 005 - As an Administrator, I want to modify an existing account, so that I can update the account holders information.
 
-Sprint 1
+Done:
 * 001 - As an Administrator, I want to log into my account that has administrator privilege, so that I can have access administrator actions.
 * 002 - As an Administrator, I want to log out of my account, so that I can end my session as administrator.
+* 003 - As an Administrator, I want to create new account for another person with roles of Administrator, Instructor, or Student, so that the other person can access their accounts with their allowed actions based on their role.
+
+Sprint 3:
+* 003 - As an Administrator, I want to create new account for another person with roles of Administrator, Instructor, or Student, so that the other person can access their accounts with their allowed actions based on their role.
+
