@@ -1,4 +1,4 @@
-package com.kachunchan.academicrecordbook.account.exception;
+package com.kachunchan.academicrecordbook.exception;
 
 public class AccountDoesNotExistException extends RuntimeException {
     

@@ -1,4 +1,4 @@
-package com.kachunchan.academicrecordbook.account.domain;
+package com.kachunchan.academicrecordbook.domain;
 
 import lombok.Data;
 

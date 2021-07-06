@@ -1,8 +1,8 @@
-package com.kachunchan.academicrecordbook.account.service;
+package com.kachunchan.academicrecordbook.service;
 
-import com.kachunchan.academicrecordbook.account.domain.Account;
-import com.kachunchan.academicrecordbook.account.exception.AccountDoesNotExistException;
-import com.kachunchan.academicrecordbook.account.repository.AccountRepository;
+import com.kachunchan.academicrecordbook.domain.Account;
+import com.kachunchan.academicrecordbook.exception.AccountDoesNotExistException;
+import com.kachunchan.academicrecordbook.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
 @Service
