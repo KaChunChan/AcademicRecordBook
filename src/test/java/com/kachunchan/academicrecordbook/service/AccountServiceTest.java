@@ -2,7 +2,6 @@ package com.kachunchan.academicrecordbook.service;
 
 import com.kachunchan.academicrecordbook.domain.Account;
 import com.kachunchan.academicrecordbook.domain.Role;
-import com.kachunchan.academicrecordbook.exception.AccountDoesNotExistException;
 import com.kachunchan.academicrecordbook.repository.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,9 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,8 +36,16 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void givenANonExistingUsername_whenGettingANonExistingAccount_thenThrowAccountDoesNotExistException() {
+    public void givenANonExistingUsername_whenGettingANonExistingAccount_thenReturnNull() {
         when(accountRepository.getAnAccountByUsername(anyString())).thenReturn(null);
-        assertThrows(AccountDoesNotExistException.class, () -> service.getAnAccount("username"));
+        assertNull(service.getAnAccount("username"));
+    }
+
+    @Test
+    public void givenANonExistingUsername_whenAddingANewAccount_thenReturnAccount() {
+        Account newAccount = new Account("forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
+        Account stubbedAccount = new Account(1L, "forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
+        when(accountRepository.save(any())).thenReturn(stubbedAccount);
+        assertEquals(stubbedAccount, service.addAccount(newAccount));
     }
 }

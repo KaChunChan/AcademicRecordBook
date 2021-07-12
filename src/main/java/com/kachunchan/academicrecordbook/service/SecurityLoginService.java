@@ -23,7 +23,7 @@ public class SecurityLoginService implements UserDetailsService {
         return User
                 .withUsername(retrievedAccount.getUsername())
                 .password(retrievedAccount.getPassword())
-                .authorities(retrievedAccount.getRole().toString())
+                .roles(retrievedAccount.getRole().getCode())
                 .build();
     }
 }

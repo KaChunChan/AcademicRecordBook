@@ -31,4 +31,13 @@ public class AccountRepositoryTest {
         Account account = accountRepository.getAnAccountByUsername("username");
         assertNull(account);
     }
+
+    @Test
+    public void givenANonExistingUsername_whenAddingANewAccount_thenReturnAccountWithID() {
+        int expectedID = accountRepository.findAll().size() + 1 ;
+        System.out.println("The expected ID is " + expectedID);
+        Account newUser = new Account("newForename", "newSurname", "newUsername", "newEmail@email.com", "newPassword", Role.STUDENT);
+        Account expectedAccount = new Account(expectedID, "newForename", "newSurname", "newUsername", "newEmail@email.com", "newPassword", Role.STUDENT);
+        assertEquals(expectedAccount, accountRepository.save(newUser));
+    }
 }
