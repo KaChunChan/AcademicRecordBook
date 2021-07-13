@@ -31,7 +31,7 @@ public class SecurityWebConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests((authorize) -> authorize
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .antMatchers("/", "/academicrecordbook").permitAll()
-                        .antMatchers("/admin", "/admin/**").hasRole(Role.ADMINISTRATOR.getCode())
+                        .antMatchers("/admin", "/admin/**", "/admin**").hasRole(Role.ADMINISTRATOR.getCode())
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin

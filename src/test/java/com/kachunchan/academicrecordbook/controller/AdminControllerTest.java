@@ -14,6 +14,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -72,7 +75,7 @@ public class AdminControllerTest {
 
     @Test
     @WithMockUser(roles = "A")
-    public void givenAdminUserCreatesAValidNewUser_whenAPostRequestIsHandledSuccessfully_thenReturnAdminPage() throws Exception {
+    public void givenAdminUserCreatesAValidNewUser_whenAPostRequestIsHandledSuccessfully_thenRedirectToAdminPage() throws Exception {
         RequestBuilder request = post("/admin-add-user")
                 .with(csrf())
                 .param("forename", "forename")
@@ -83,16 +86,8 @@ public class AdminControllerTest {
                 .param("role", Role.ADMINISTRATOR.toString());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"))
-                .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account" , hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account" , hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account" , hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account" , hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account" , hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account" , hasProperty("role", is(Role.ADMINISTRATOR))));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).getAnAccount(anyString());
         verify(accountService).addAccount(any());
     }
@@ -115,12 +110,12 @@ public class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin-add-user"))
                 .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account" , hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account" , hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account" , hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account" , hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account" , hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account" , hasProperty("role", is(Role.ADMINISTRATOR))));
+                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
+                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
+                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
+                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
         verify(accountService).getAnAccount(anyString());
         verifyNoMoreInteractions(accountService);
     }
@@ -141,12 +136,12 @@ public class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin-add-user"))
                 .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account" , hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account" , hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account" , hasProperty("username", is(""))))
-                .andExpect(model().attribute("account" , hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account" , hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account" , hasProperty("role", is(Role.ADMINISTRATOR))));
+                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
+                .andExpect(model().attribute("account", hasProperty("username", is(""))))
+                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
+                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
         verifyNoInteractions(accountService);
     }
 
@@ -166,12 +161,12 @@ public class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin-add-user"))
                 .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account" , hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account" , hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account" , hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account" , hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account" , hasProperty("password", is(""))))
-                .andExpect(model().attribute("account" , hasProperty("role", is(Role.ADMINISTRATOR))));
+                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
+                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
+                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("account", hasProperty("password", is(""))))
+                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
         verifyNoInteractions(accountService);
     }
 
@@ -188,5 +183,30 @@ public class AdminControllerTest {
                 .andExpect(model().attribute("availableRoles", hasItem(Role.ADMINISTRATOR)))
                 .andExpect(model().attribute("availableRoles", hasItem(Role.INSTRUCTOR)))
                 .andExpect(model().attribute("availableRoles", hasItem(Role.STUDENT)));
+    }
+
+    @Test
+    @WithMockUser(roles = "A")
+    public void givenAdminUserRequestAdminPage_whenRetrievingPage_thenDisplayAllUserAccounts() throws Exception {
+        RequestBuilder request = get("/admin").with(csrf());
+
+        Account account1 = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
+        Account account2 = new Account(2L,"forename2", "surname2", "username2", "email@eamil.com2", "password2", Role.INSTRUCTOR);
+        Account account3 = new Account(3L, "forename3", "surname3", "username3", "email@eamil.com3", "password3", Role.STUDENT);
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(account1);
+        accounts.add(account2);
+        accounts.add(account3);
+
+        when(accountService.getAllAccounts()).thenReturn(accounts);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"))
+                .andExpect(model().attribute("accounts", hasItem(account1)))
+                .andExpect(model().attribute("accounts", hasItem(account2)))
+                .andExpect(model().attribute("accounts", hasItem(account3)));
+        verify(accountService).getAllAccounts();
     }
 }

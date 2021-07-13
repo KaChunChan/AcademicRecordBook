@@ -4,6 +4,8 @@ import com.kachunchan.academicrecordbook.domain.Account;
 import com.kachunchan.academicrecordbook.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -21,4 +23,7 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.save((account));
     }
 
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
+    }
 }
