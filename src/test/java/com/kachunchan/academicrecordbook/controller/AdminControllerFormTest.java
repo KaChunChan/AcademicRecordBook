@@ -49,9 +49,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -69,9 +68,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -89,9 +87,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -109,9 +106,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -129,9 +125,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -149,9 +144,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -169,9 +163,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -395,9 +388,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -415,9 +407,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -435,9 +426,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -455,9 +445,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -475,9 +464,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -495,9 +483,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -515,9 +502,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -535,9 +521,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -739,9 +724,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -759,9 +743,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -1003,9 +986,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 
@@ -1087,9 +1069,8 @@ public class AdminControllerFormTest {
                 .with(csrf());
 
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
         verify(accountService).addAccount(any());
     }
 

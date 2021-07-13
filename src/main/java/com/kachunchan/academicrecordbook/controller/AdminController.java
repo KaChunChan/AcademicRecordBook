@@ -1,5 +1,6 @@
 package com.kachunchan.academicrecordbook.controller;
 
+import com.kachunchan.academicrecordbook.domain.Account;
 import com.kachunchan.academicrecordbook.domain.AccountForm;
 import com.kachunchan.academicrecordbook.domain.Role;
 import com.kachunchan.academicrecordbook.service.AccountFormService;
@@ -29,7 +30,10 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String getAdminPage() {
+    public String getAdminPage(Model model) {
+        List<Account> accounts = accountService.getAllAccounts();
+        model.addAttribute("accounts", accounts);
+        System.out.println(model.toString());
         return "admin";
     }
 
@@ -46,6 +50,6 @@ public class AdminController {
             return "admin-add-user";
         }
         accountService.addAccount(accountFormService.makeIntoAccount(account));
-        return "admin";
+        return "redirect:/admin";
     }
 }
