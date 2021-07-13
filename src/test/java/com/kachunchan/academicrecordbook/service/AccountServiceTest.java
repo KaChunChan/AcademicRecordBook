@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,5 +67,11 @@ public class AccountServiceTest {
 
         when(accountRepository.findAll()).thenReturn(accounts);
         assertEquals(3, service.getAllAccounts().size());
+    }
+
+    @Test
+    public void whenDeletingAnAccount_thenDeleteAccountFromRepository() {
+        service.deleteAccount(1L);
+        verify(accountRepository).deleteById(1L);
     }
 }

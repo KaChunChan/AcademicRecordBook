@@ -9,4 +9,5 @@ public interface AccountService {
     Account getAnAccount(String username);
     Account addAccount(Account newAccount);
     List<Account> getAllAccounts();
+    void deleteAccount(Long id);
 }

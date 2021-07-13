@@ -5,12 +5,15 @@ import com.kachunchan.academicrecordbook.domain.AccountForm;
 import com.kachunchan.academicrecordbook.domain.Role;
 import com.kachunchan.academicrecordbook.service.AccountFormService;
 import com.kachunchan.academicrecordbook.service.AccountService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -30,10 +33,9 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String getAdminPage(Model model) {
+    public String getAdminPage(@ModelAttribute("error") String error, Model model) {
         List<Account> accounts = accountService.getAllAccounts();
         model.addAttribute("accounts", accounts);
-        System.out.println(model.toString());
         return "admin";
     }
 
@@ -50,6 +52,17 @@ public class AdminController {
             return "admin-add-user";
         }
         accountService.addAccount(accountFormService.makeIntoAccount(account));
+        return "redirect:/admin";
+    }
+
+    @RequestMapping(value = "/admin-delete-user", method = RequestMethod.POST)
+    public String deleteUser(@RequestParam("accountID") String accountID, RedirectAttributes redirectAttributes) {
+        long id = Long.parseLong(accountID);
+        if(accountService.getAnAccount(SecurityContextHolder.getContext().getAuthentication().getName()).getId() == id) {
+            redirectAttributes.addFlashAttribute("error", "Cannot delete current user account");
+            return "redirect:/admin";
+        }
+        accountService.deleteAccount(id);
         return "redirect:/admin";
     }
 }
