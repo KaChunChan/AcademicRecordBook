@@ -173,7 +173,8 @@ public class AdminControllerTest {
     @Test
     @WithMockUser(roles = "A")
     public void givenAdminUserCreatesANewUser_whenSelectingRole_thenASelectionOfRolesIsProvidedInTheModel() throws Exception {
-        RequestBuilder request = get("/admin-add-user").with(csrf());
+        RequestBuilder request = get("/admin-add-user")
+                .with(csrf());
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -188,7 +189,8 @@ public class AdminControllerTest {
     @Test
     @WithMockUser(roles = "A")
     public void givenAdminUserRequestAdminPage_whenRetrievingPage_thenDisplayAllUserAccounts() throws Exception {
-        RequestBuilder request = get("/admin").with(csrf());
+        RequestBuilder request = get("/admin")
+                .with(csrf());
 
         Account account1 = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
         Account account2 = new Account(2L,"forename2", "surname2", "username2", "email@eamil.com2", "password2", Role.INSTRUCTOR);
@@ -208,5 +210,40 @@ public class AdminControllerTest {
                 .andExpect(model().attribute("accounts", hasItem(account2)))
                 .andExpect(model().attribute("accounts", hasItem(account3)));
         verify(accountService).getAllAccounts();
+    }
+
+    @Test
+    @WithMockUser(roles = "A")
+    public void givenAdminViewingAListOfUsersAccounts_whenAnAccountHasBeenRequestedToBeDeleted_thenDeleteUserAccountAndRedirectToAdminPage() throws Exception {
+        RequestBuilder request = post("/admin-delete-user")
+                .with(csrf())
+                .param("accountID", "2");
+
+        Account stubbedAccount = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
+        when(accountService.getAnAccount(anyString())).thenReturn(stubbedAccount);
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
+        verify(accountService).getAnAccount(any());
+        verify(accountService).deleteAccount(any());
+    }
+
+    @Test
+    @WithMockUser(roles = "A")
+    public void givenAdminViewingAListOfUsersAccounts_whenAdminDeletesTheirAccount_thenDoNotDeleteAccountAndRedirectToAdminPageWithErrorMessage() throws Exception {
+        RequestBuilder request = post("/admin-delete-user")
+                .with(csrf())
+                .param("accountID", "1");
+
+        Account stubbedAccount = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
+        when(accountService.getAnAccount(anyString())).thenReturn(stubbedAccount);
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"))
+        .andExpect(flash().attribute("error", is("Cannot delete current user account")));
+        verify(accountService).getAnAccount(any());
+        verifyNoMoreInteractions(accountService);
     }
 }
