@@ -62,6 +62,10 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Cannot delete current user account");
             return "redirect:/admin";
         }
+        if(accountService.getAnAccount(id) == null) {
+            redirectAttributes.addFlashAttribute("error", "Account does not exist or has already been deleted");
+            return "redirect:/admin";
+        }
         accountService.deleteAccount(id);
         return "redirect:/admin";
     }

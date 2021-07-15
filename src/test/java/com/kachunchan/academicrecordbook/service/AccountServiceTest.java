@@ -16,8 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
@@ -73,5 +72,26 @@ public class AccountServiceTest {
     public void whenDeletingAnAccount_thenDeleteAccountFromRepository() {
         service.deleteAccount(1L);
         verify(accountRepository).deleteById(1L);
+    }
+
+    @Test
+    public void givenAnAccountIDThatBelongsToAnExistingAccount_whenGettingTheAccountWithTheID_thenReturnAccount() {
+        Account stubbedAccount = new Account(1l, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
+        long accountId = 1L;
+        when(accountRepository.existsById(anyLong())).thenReturn(true);
+        when(accountRepository.getOne(anyLong())).thenReturn(stubbedAccount);
+
+        Account actualAccount = service.getAnAccount(accountId);
+        assertEquals(stubbedAccount, actualAccount);
+        verify(accountRepository).getOne(accountId);
+    }
+
+    @Test
+    public void givenAnAccountIDThatDoesNotExistAnymore_whenGettingTheAccountWithTheID_thenReturnNull() {
+        when(accountRepository.existsById(anyLong())).thenReturn(false);
+        long accountId = 1L;
+        assertNull(service.getAnAccount(accountId));
+        verify(accountRepository).existsById(accountId);
+        verifyNoMoreInteractions(accountRepository);
     }
 }
