@@ -19,6 +19,13 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.getAnAccountByUsername(username);
     }
 
+    public Account getAnAccount(long id) {
+        if (accountRepository.existsById(id)) {
+            return accountRepository.getOne(id);
+        }
+        return null;
+    }
+
     public Account addAccount(Account account) {
         return accountRepository.save((account));
     }

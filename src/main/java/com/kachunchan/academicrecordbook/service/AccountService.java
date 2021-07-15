@@ -7,6 +7,7 @@ import java.util.List;
 public interface AccountService {
 
     Account getAnAccount(String username);
+    Account getAnAccount(long id);
     Account addAccount(Account newAccount);
     List<Account> getAllAccounts();
     void deleteAccount(Long id);
