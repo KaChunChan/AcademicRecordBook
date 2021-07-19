@@ -94,4 +94,13 @@ public class AccountServiceTest {
         verify(accountRepository).existsById(accountId);
         verifyNoMoreInteractions(accountRepository);
     }
+
+    @Test
+    public void givenAnAccountThatIsToBeUpdated_whenAccountHasBeenUpdated_theReturnAccount() {
+        Account editedAccount = new Account(1L, "forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
+        Account stubbedAccount = new Account(1L, "forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
+        when(accountRepository.save(any())).thenReturn(stubbedAccount);
+        assertEquals(stubbedAccount, service.updateAccount(editedAccount));
+        verify(accountRepository).save(editedAccount);
+    }
 }

@@ -35,10 +35,28 @@ public class AccountFormServiceImplTest {
         accountForm.setEmail("email@email.com");
         accountForm.setPassword("password");
         accountForm.setRole(Role.ADMINISTRATOR);
-
         Account expectedAccount = new Account("forename", "surname", "username", "email@email.com", "{noop}password", Role.ADMINISTRATOR);
+
         when(passwordEncoderService.encodePassword(anyString())).thenReturn("{noop}password");
+
         Account actualAccount = accountFormService.makeIntoAccount(accountForm);
         assertEquals(expectedAccount, actualAccount);
+    }
+
+    @Test
+    public void givenAnAccount_whenMakingIntoAccountForm_thenReturnAccountFormWithDecryptedPassword() {
+        Account account = new Account(1l, "forename", "surname", "username", "email@email.com", "{noop}password", Role.ADMINISTRATOR);
+        AccountForm expectedForm = new AccountForm();
+        expectedForm.setForename("forename");
+        expectedForm.setSurname("surname");
+        expectedForm.setUsername("username");
+        expectedForm.setEmail("email@email.com");
+        expectedForm.setPassword("password");
+        expectedForm.setRole(Role.ADMINISTRATOR);
+
+        when(passwordEncoderService.decodePassword(anyString())).thenReturn("password");
+
+        AccountForm accountForm = accountFormService.makeIntoAccountForm(account);
+        assertEquals(expectedForm, accountForm);
     }
 }

@@ -185,8 +185,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -205,8 +205,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -225,8 +225,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -245,8 +245,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -265,8 +265,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -285,8 +285,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -305,8 +305,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -325,8 +325,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -345,8 +345,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -365,8 +365,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -543,8 +543,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -563,8 +563,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -583,8 +583,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -603,8 +603,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -623,8 +623,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -643,8 +643,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -663,8 +663,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -683,8 +683,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -703,8 +703,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -765,8 +765,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -785,8 +785,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -805,8 +805,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -825,8 +825,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -845,8 +845,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -865,8 +865,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -885,8 +885,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -905,8 +905,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -925,8 +925,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -945,8 +945,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -965,8 +965,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -1008,8 +1008,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -1028,8 +1028,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -1048,8 +1048,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -1091,8 +1091,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 
@@ -1111,8 +1111,8 @@ public class AdminControllerFormTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin-add-user"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-add-user.jsp"));
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
         verifyNoInteractions(accountService);
     }
 }

@@ -27,7 +27,7 @@ This is a learning project for me to learn and use Java and Spring Framework to 
 
 # User Stories
 ToDo:
-* 005 - As an Administrator, I want to modify an existing account, so that I can update the account holders information.
+
 
 InProgress:
 
@@ -37,14 +37,13 @@ Done:
 * 002 - As an Administrator, I want to log out of my account, so that I can end my session as administrator.
 * 003 - As an Administrator, I want to create new account for another person with roles of Administrator, Instructor, or Student, so that the other person can access their accounts with their allowed actions based on their role.
 * 004 - As an Administrator, I want to delete an existing account, so that I can remove that person from the Academic Record Book.
+* 005 - As an Administrator, I want to modify an existing account, so that I can update the account holders information.
 * 006 - As an Administrator, I want to view a list of all existing account, so that I can see all existing user accounts.
 
 
-Sprint 3 Goal:
+Sprint 4 Goal:
 
 Planned:
-* 003 - As an Administrator, I want to create new account for another person with roles of Administrator, Instructor, or Student, so that the other person can access their accounts with their allowed actions based on their role.
+* 005 - As an Administrator, I want to modify an existing account, so that I can update the account holders information.
 
 Pulled in:
-* 004 - As an Administrator, I want to delete an existing account, so that I can remove that person from the Academic Record Book.
-* 006 - As an Administrator, I want to view a list of all existing account, so that I can see all existing user accounts.

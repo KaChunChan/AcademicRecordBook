@@ -30,7 +30,6 @@
   <td>E-mail</td>
   <td>Password</td>
   <td>Role</td>
-  <td>Options</td>
   </thead>
   <c:forEach items="${accounts}" var="account">
     <tr>
@@ -51,6 +50,12 @@
       </td>
       <td>
         "${account.role}"
+      </td>
+      <td>
+        <form method="get" action="/admin-edit-user">
+          <input type="hidden" name="accountID" value="${account.id}"/>
+          <input type="submit" value="Edit" >
+        </form>
       </td>
       <td>
         <form method="post" action="/admin-delete-user">

@@ -6,4 +6,5 @@ import com.kachunchan.academicrecordbook.domain.AccountForm;
 public interface AccountFormService {
 
     Account makeIntoAccount(AccountForm form);
+    AccountForm makeIntoAccountForm(Account account);
 }
