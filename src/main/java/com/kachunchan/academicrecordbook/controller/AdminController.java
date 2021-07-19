@@ -40,33 +40,64 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin-add-user", method = RequestMethod.GET)
-    public String getAdminAddUserPage(@ModelAttribute("account") AccountForm account, Model model) {
+    public String getAdminAddUserPage(@ModelAttribute("account") AccountForm accountForm, Model model) {
         model.addAttribute("availableRoles", availableRoles);
-        return "admin-add-user";
+        return "admin-account-form";
     }
 
     @RequestMapping(value = "/admin-add-user", method = RequestMethod.POST)
-    public String addNewUser(@Valid @ModelAttribute("account") AccountForm account, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors() || accountService.getAnAccount(account.getUsername()) != null) {
+    public String addNewUser(@Valid @ModelAttribute("account") AccountForm accountForm, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors() || accountService.getAnAccount(accountForm.getUsername()) != null) {
             model.addAttribute("availableRoles", availableRoles);
-            return "admin-add-user";
+            return "admin-account-form";
         }
-        accountService.addAccount(accountFormService.makeIntoAccount(account));
+        accountService.addAccount(accountFormService.makeIntoAccount(accountForm));
         return "redirect:/admin";
     }
 
     @RequestMapping(value = "/admin-delete-user", method = RequestMethod.POST)
     public String deleteUser(@RequestParam("accountID") String accountID, RedirectAttributes redirectAttributes) {
         long id = Long.parseLong(accountID);
-        if(accountService.getAnAccount(SecurityContextHolder.getContext().getAuthentication().getName()).getId() == id) {
+        if (accountService.getAnAccount(SecurityContextHolder.getContext().getAuthentication().getName()).getId() == id) {
             redirectAttributes.addFlashAttribute("error", "Cannot delete current user account");
             return "redirect:/admin";
         }
-        if(accountService.getAnAccount(id) == null) {
+        if (accountService.getAnAccount(id) == null) {
             redirectAttributes.addFlashAttribute("error", "Account does not exist or has already been deleted");
             return "redirect:/admin";
         }
         accountService.deleteAccount(id);
+        return "redirect:/admin";
+    }
+
+    @RequestMapping(value = "/admin-edit-user", method = RequestMethod.GET)
+    public String editUser(@RequestParam("accountID") String accountID, Model model) {
+        long id = Long.parseLong(accountID);
+        Account account = accountService.getAnAccount(id);
+        AccountForm accountForm = accountFormService.makeIntoAccountForm(account);
+        model.addAttribute("accountID", accountID);
+        model.addAttribute("account", accountForm);
+        model.addAttribute("availableRoles", availableRoles);
+        return "admin-account-form";
+    }
+
+    @RequestMapping(value = "/admin-edit-user", method = RequestMethod.POST)
+    public String updateUser(@RequestParam("accountID") String accountID, @Valid @ModelAttribute("account") AccountForm accountForm, BindingResult bindingResult, Model model) {
+        long id = Long.parseLong(accountID);
+        model.addAttribute("accountID", id);
+        model.addAttribute("availableRoles", availableRoles);
+        if (bindingResult.hasErrors()) {
+            return "admin-account-form";
+        }
+
+        Account existingAccount = accountService.getAnAccount(accountForm.getUsername());
+        if (existingAccount != null && existingAccount.getId() != id) {
+            return "admin-account-form";
+        }
+
+        Account editedAccount = accountFormService.makeIntoAccount(accountForm);
+        editedAccount.setId(id);
+        accountService.updateAccount(editedAccount);
         return "redirect:/admin";
     }
 }

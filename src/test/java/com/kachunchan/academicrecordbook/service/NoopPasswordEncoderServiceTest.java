@@ -22,4 +22,11 @@ public class NoopPasswordEncoderServiceTest {
         assertEquals(expectedPassword, actualPassword);
     }
 
+    @Test
+    public void givenAnEncodedPassword_whenDecodePasswordIsInvoked_thenReturnDecodedPasswordThatDoesNotContainNoop(){
+        String encodedPassword = "{noop}password{noop}password";
+        String expectedPassword = "password{noop}password";
+        String actualPassword = passwordEncoderService.decodePassword(encodedPassword);
+        assertEquals(expectedPassword, actualPassword);
+    }
 }

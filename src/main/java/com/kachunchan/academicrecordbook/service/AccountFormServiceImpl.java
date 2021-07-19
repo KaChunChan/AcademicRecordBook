@@ -24,4 +24,16 @@ public class AccountFormServiceImpl implements AccountFormService {
         account.setRole(form.getRole());
         return account;
     }
+
+    @Override
+    public AccountForm makeIntoAccountForm(Account account) {
+        AccountForm form = new AccountForm();
+        form.setForename(account.getForename());
+        form.setSurname(account.getSurname());
+        form.setUsername(account.getUsername());
+        form.setEmail(account.getEmail());
+        form.setPassword(passwordEncoderService.decodePassword(account.getPassword()));
+        form.setRole(account.getRole());
+        return form;
+    }
 }

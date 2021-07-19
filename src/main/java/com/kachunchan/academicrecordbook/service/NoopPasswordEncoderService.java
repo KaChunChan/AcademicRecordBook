@@ -10,4 +10,11 @@ public class NoopPasswordEncoderService implements  PasswordEncoderService {
         encodedPassword.append(password);
         return encodedPassword.toString();
     }
+
+    @Override
+    public String decodePassword(String password) {
+        String removalFromString = ("\\{noop\\}");
+        String decodedPassword = password.replaceFirst(removalFromString, "");
+        return decodedPassword;
+    }
 }
