@@ -1,12 +1,11 @@
 package com.kachunchan.academicrecordbook.controller;
 
-import com.kachunchan.academicrecordbook.domain.Account;
-import com.kachunchan.academicrecordbook.domain.AccountForm;
-import com.kachunchan.academicrecordbook.domain.Role;
-import com.kachunchan.academicrecordbook.service.AccountFormService;
-import com.kachunchan.academicrecordbook.service.AccountService;
+import com.kachunchan.academicrecordbook.domain.*;
+import com.kachunchan.academicrecordbook.service.EndUserFormService;
+import com.kachunchan.academicrecordbook.service.EndUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,25 +34,54 @@ public class AdminControllerTest {
     @MockBean
     private UserDetailsService userDetailsService;
     @MockBean
-    private AccountService accountService;
+    private EndUserService endUserService;
     @MockBean
-    private AccountFormService accountFormService;
+    private EndUserFormService endUserFormService;
+    @Value("${spring.mvc.view.prefix}")
+    private String prefixView;
+
+    //Test getAdminPage()
 
     @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserRequestingAdminPage_whenAGetRequestIsHandled_thenReturnAdminPage() throws Exception {
+    @WithMockUser(authorities = "A")
+    public void givenAdminEndUser_whenRequestingAdminPage_thenReturnAdminView() throws Exception {
         RequestBuilder request = get("/admin")
                 .with(csrf());
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin.jsp"))
+                .andExpect(view().name("admin"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "A")
+    public void givenAdminEndUser_whenRequestingAdminPage_thenReturnAdminViewWithListOfEndUsers() throws Exception {
+        RequestBuilder request = get("/admin")
+                .with(csrf());
+
+        EndUser endUser1 = new Admin(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1");
+        EndUser endUser2 = new Instructor(2L, "forename2", "surname2", "username2", "email@eamil.com2", "password2");
+        EndUser endUser3 = new Student(3L, "forename3", "surname3", "username3", "email@eamil.com3", "password3");
+        List<EndUser> endUsers = new ArrayList<>();
+        endUsers.add(endUser1);
+        endUsers.add(endUser2);
+        endUsers.add(endUser3);
+        when(endUserService.getAllEndUsers()).thenReturn(endUsers);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin.jsp"))
                 .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"));
+                .andExpect(model().attribute("endUsers", hasItem(endUser1)))
+                .andExpect(model().attribute("endUsers", hasItem(endUser2)))
+                .andExpect(model().attribute("endUsers", hasItem(endUser3)));
+        verify(endUserService).getAllEndUsers();
     }
 
     @Test
     @WithMockUser(roles = "S")
-    public void givenNonAdminUserRequestingAdminPage_whenAGetRequestIsHandled_thenShowForbiddenError() throws Exception {
+    public void givenNonAdminEndUser_whenRequestingAdminPage_thenShowForbiddenError() throws Exception {
         RequestBuilder request = get("/admin")
                 .with(csrf());
 
@@ -62,352 +89,347 @@ public class AdminControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    //Test getAdminAddUserPage()
+
     @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserRequestingAddNewUser_whenAGetRequestIsHandled_thenReturnAdminAddUserPage() throws Exception {
+    @WithMockUser(authorities = "A")
+    public void givenAdminEndUser_whenRequestingAdminAddUserPage_thenReturnAdminAddUserViewWithAListOfRolesInTheModel() throws Exception {
         RequestBuilder request = get("/admin-add-user")
                 .with(csrf());
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin-account-form.jsp"))
                 .andExpect(view().name("admin-account-form"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"));
-    }
-
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserCreatesAValidNewUser_whenAPostRequestIsHandledSuccessfully_thenRedirectToAdminPage() throws Exception {
-        RequestBuilder request = post("/admin-add-user")
-                .with(csrf())
-                .param("forename", "forename")
-                .param("surname", "surname")
-                .param("username", "username")
-                .param("email", "email@email.com")
-                .param("password", "password")
-                .param("role", Role.ADMINISTRATOR.toString());
-
-        mockMvc.perform(request)
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/admin"));
-        verify(accountService).getAnAccount("username");
-        verify(accountService).addAccount(any());
-    }
-
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserCreatesANewUser_whenTheUsernameAlreadyExists_thenReturnBackToAdminAddUserPageWithSameFormEntry() throws Exception {
-        RequestBuilder request = post("/admin-add-user")
-                .with(csrf())
-                .param("forename", "forename")
-                .param("surname", "surname")
-                .param("username", "username")
-                .param("email", "email@email.com")
-                .param("password", "password")
-                .param("role", Role.ADMINISTRATOR.toString());
-
-        when(accountService.getAnAccount(anyString())).thenReturn(new Account());
-
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin-account-form"))
-                .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
-        verify(accountService).getAnAccount("username");
-        verifyNoMoreInteractions(accountService);
-    }
-
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserCreatesANewUser_whenTheUsernameIsBlank_thenReturnBackToAdminAddUserPageWithSameFormEntry() throws Exception {
-        RequestBuilder request = post("/admin-add-user")
-                .with(csrf())
-                .param("forename", "forename")
-                .param("surname", "surname")
-                .param("username", "")
-                .param("email", "email@email.com")
-                .param("password", "password")
-                .param("role", Role.ADMINISTRATOR.toString());
-
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin-account-form"))
-                .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account", hasProperty("username", is(""))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
-        verifyNoInteractions(accountService);
-    }
-
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserCreatesANewUser_whenThePasswordIsBlank_thenReturnBackToAdminAddUserPageWithSameFormEntry() throws Exception {
-        RequestBuilder request = post("/admin-add-user")
-                .with(csrf())
-                .param("forename", "forename")
-                .param("surname", "surname")
-                .param("username", "username")
-                .param("email", "email@email.com")
-                .param("password", "")
-                .param("role", Role.ADMINISTRATOR.toString());
-
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin-account-form"))
-                .andExpect(model().attributeExists("account"))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account", hasProperty("password", is(""))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
-        verifyNoInteractions(accountService);
-    }
-
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserCreatesANewUser_whenSelectingRole_thenASelectionOfRolesIsProvidedInTheModel() throws Exception {
-        RequestBuilder request = get("/admin-add-user")
-                .with(csrf());
-
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin-account-form"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"))
                 .andExpect(model().attributeExists("availableRoles"))
-                .andExpect(model().attribute("availableRoles", hasItem(Role.ADMINISTRATOR)))
+                .andExpect(model().attribute("availableRoles", hasItem(Role.ADMIN)))
                 .andExpect(model().attribute("availableRoles", hasItem(Role.INSTRUCTOR)))
                 .andExpect(model().attribute("availableRoles", hasItem(Role.STUDENT)));
     }
 
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAdminUserRequestAdminPage_whenRetrievingPage_thenDisplayAllUserAccounts() throws Exception {
-        RequestBuilder request = get("/admin")
-                .with(csrf());
-
-        Account account1 = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
-        Account account2 = new Account(2L, "forename2", "surname2", "username2", "email@eamil.com2", "password2", Role.INSTRUCTOR);
-        Account account3 = new Account(3L, "forename3", "surname3", "username3", "email@eamil.com3", "password3", Role.STUDENT);
-        List<Account> accounts = new ArrayList<>();
-        accounts.add(account1);
-        accounts.add(account2);
-        accounts.add(account3);
-
-        when(accountService.getAllAccounts()).thenReturn(accounts);
-
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin.jsp"))
-                .andExpect(model().attribute("accounts", hasItem(account1)))
-                .andExpect(model().attribute("accounts", hasItem(account2)))
-                .andExpect(model().attribute("accounts", hasItem(account3)));
-        verify(accountService).getAllAccounts();
-    }
+    //Test addNewUser
 
     @Test
-    @WithMockUser(roles = "A", username = "username1")
-    public void givenAdminViewingAListOfUsersAccounts_whenAnAccountHasBeenRequestedToBeDeleted_thenDeleteUserAccountAndRedirectToAdminPage() throws Exception {
-        RequestBuilder request = post("/admin-delete-user")
-                .with(csrf())
-                .param("accountID", "2");
-
-        Account stubbedAdminAccount = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
-        Account stubbedAccount = new Account(2L, "forename2", "surname2", "username2", "email@eamil.com2", "password2", Role.INSTRUCTOR);
-        when(accountService.getAnAccount(anyString())).thenReturn(stubbedAdminAccount);
-        when(accountService.getAnAccount(anyLong())).thenReturn(stubbedAccount);
-
-        mockMvc.perform(request)
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/admin"));
-        verify(accountService).getAnAccount("username1");
-        verify(accountService).getAnAccount(2L);
-        verify(accountService).deleteAccount(2L);
-    }
-
-    @Test
-    @WithMockUser(roles = "A", username = "username1")
-    public void givenAdminViewingAListOfUsersAccounts_whenAdminDeletesTheirOwnAccount_thenDoNotDeleteOwnAccountAndRedirectToAdminPageWithErrorMessage() throws Exception {
-        RequestBuilder request = post("/admin-delete-user")
-                .with(csrf())
-                .param("accountID", "1");
-
-        Account stubbedAccount = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
-        when(accountService.getAnAccount(anyString())).thenReturn(stubbedAccount);
-
-        mockMvc.perform(request)
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/admin"))
-                .andExpect(flash().attribute("error", is("Cannot delete current user account")));
-        verify(accountService).getAnAccount("username1");
-        verifyNoMoreInteractions(accountService);
-    }
-
-    @Test
-    @WithMockUser(roles = "A", username = "username1")
-    public void givenTwoAdminUsersDeletesTheSameUserAccount_whenTheAccountHasBeenDeletedByOneAdminAndTheSecondAdminDeletesTheSameAccount_thenReturnToAdminPageWithAccountAlreadyDeletedMessage() throws Exception {
-        RequestBuilder request = post("/admin-delete-user")
-                .with(csrf())
-                .param("accountID", "2");
-
-        Account stubbedAdminAccount = new Account(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1", Role.ADMINISTRATOR);
-        when(accountService.getAnAccount(anyString())).thenReturn(stubbedAdminAccount);
-        when(accountService.getAnAccount(anyLong())).thenReturn(null);
-
-        mockMvc.perform(request)
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/admin"))
-                .andExpect(flash().attribute("error", is("Account does not exist or has already been deleted")));
-        verify(accountService).getAnAccount("username1");
-        verify(accountService).getAnAccount(2L);
-        verifyNoMoreInteractions(accountService);
-    }
-
-    @Test
-    @WithMockUser(roles = "A")
-    public void givenAnAdminWantsToChangeAnExistingUserAccount_whenSelectedEditOnAnUserAccount_thenReturnToAdminAccountFormPageWithExistingDetailsFromSelectedUserAccount() throws Exception {
-        RequestBuilder request = get("/admin-edit-user")
-                .with(csrf())
-                .param("accountID", "1");
-
-        Account stubbedAccount = new Account(1L, "forename1", "surname1", "username1", "email@email.com1", "password1", Role.ADMINISTRATOR);
-        AccountForm accountForm = new AccountForm();
-        accountForm.setForename("forename1");
-        accountForm.setSurname("surname1");
-        accountForm.setUsername("username1");
-        accountForm.setEmail("email@email.com1");
-        accountForm.setPassword("password1");
-        accountForm.setRole(Role.ADMINISTRATOR);
-        when(accountService.getAnAccount(anyLong())).thenReturn(stubbedAccount);
-        when(accountFormService.makeIntoAccountForm(any(Account.class))).thenReturn(accountForm);
-
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin-account-form"))
-                .andExpect(forwardedUrl("/WEB-INF/view/admin-account-form.jsp"))
-                .andExpect(model().attribute("accountID", is("1")))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename1"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is("surname1"))))
-                .andExpect(model().attribute("account", hasProperty("username", is("username1"))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com1"))))
-                .andExpect(model().attribute("account", hasProperty("password", is("password1"))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
-        verify(accountService).getAnAccount(1L);
-    }
-
-    @Test
-    @WithMockUser(roles = "A", username = "username")
-    public void givenAnAdminUpdatingAnUserAccount_whenTheAccountDetailsAreValid_thenUpdateAccountAndReturnToAdminPage() throws Exception {
-        RequestBuilder request = post ("/admin-edit-user")
-                .with(csrf())
-                .param("accountID", "1")
+    @WithMockUser(authorities = "A")
+    public void givenAdminEndUserEnteredValidNewEndUserDetails_whenRequestingAddNewUser_thenConvertFormAndAddNewEndUserAndRedirectToAdminPage() throws Exception {
+        RequestBuilder request = post("/admin-add-user")
                 .param("forename", "forename")
                 .param("surname", "surname")
                 .param("username", "username")
                 .param("email", "email@email.com")
                 .param("password", "password")
-                .param("role", Role.ADMINISTRATOR.toString());
+                .param("role", Role.ADMIN.toString())
+                .with(csrf());
 
-        Account stubbedAccount = new Account(1L, "forename", "surname", "username", "email@email.com", "password", Role.ADMINISTRATOR);
-        when(accountFormService.makeIntoAccount(any())).thenReturn(stubbedAccount);
+        EndUser newEndUser = new Admin(1L, "forename", "surname", "username", "email@email.com", "password");
+        when(endUserFormService.convertToEndUser(any())).thenReturn(newEndUser);
+        when(endUserService.addEndUser(any())).thenReturn(new Admin());
+
+        mockMvc.perform(request)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+        verify(endUserFormService).convertToEndUser(any());
+        verify(endUserService).addEndUser(any());
+    }
+
+    @Test
+    @WithMockUser(authorities = "A")
+    public void givenAdminEndUserEnteredValidNewEndUserDetailsButUsernameAlreadyExists_whenRequestingAddNewUser_thenReturnBackToAdminAddUserViewWithSameFormEntry() throws Exception {
+        RequestBuilder request = post("/admin-add-user")
+                .param("forename", "forename")
+                .param("surname", "surname")
+                .param("username", "username")
+                .param("email", "email@email.com")
+                .param("password", "password")
+                .param("role", Role.ADMIN.toString())
+                .with(csrf());
+
+        when(endUserService.addEndUser(any())).thenReturn(null);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(model().attribute("endUser", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("endUser", hasProperty("surname", is("surname"))))
+                .andExpect(model().attribute("endUser", hasProperty("username", is("username"))))
+                .andExpect(model().attribute("endUser", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("endUser", hasProperty("password", is("password"))))
+                .andExpect(model().attribute("endUser", hasProperty("role", is(Role.ADMIN))));
+        verify(endUserFormService).convertToEndUser(any());
+        verify((endUserService)).addEndUser(any());
+    }
+
+    //Test deleteUser()
+
+    @Test
+    @WithMockUser(authorities = "A", username = "username1")
+    public void givenAdminEndUserSelectsAnEndUserToBeDeleted_whenRequestingAdminDeleteUser_thenDeleteUserAccountAndRedirectToAdminPage() throws Exception {
+        RequestBuilder request = post("/admin-delete-user")
+                .with(csrf())
+                .param("endUserID", "2");
+
+        EndUser stubbedAdminAccount = new Admin(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1");
+        EndUser stubbedEndUserToBeDeleted = new Instructor(2L, "forename2", "surname2", "username2", "email@eamil.com2", "password2");
+        when(endUserService.getEndUser(anyString())).thenReturn(stubbedAdminAccount);
+        when(endUserService.getEndUser(anyLong())).thenReturn(stubbedEndUserToBeDeleted);
 
         mockMvc.perform(request)
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/admin"));
-        verify(accountFormService).makeIntoAccount(any());
-        verify(accountService).updateAccount(stubbedAccount);
+        verify(endUserService).getEndUser("username1");
+        verify(endUserService).getEndUser(2L);
+        verify(endUserService).deleteEndUser(2L);
+    }
+
+
+    @Test
+    @WithMockUser(authorities = "A", username = "username1")
+    public void givenAdminEndUserSelectsThemselvesToBeDeleted_whenRequestingAdminDeleteUser_thenDoNotDeleteOwnAccountAndRedirectToAdminPageWithErrorMessage() throws Exception {
+        RequestBuilder request = post("/admin-delete-user")
+                .with(csrf())
+                .param("endUserID", "1");
+
+        EndUser stubbedAdminAccount = new Admin(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1");
+        when(endUserService.getEndUser(anyString())).thenReturn(stubbedAdminAccount);
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attribute("error", is("Cannot delete current user.")));
+        verify(endUserService).getEndUser("username1");
+        verifyNoMoreInteractions(endUserService);
     }
 
     @Test
-    @WithMockUser(roles = "A", username = "username")
-    public void givenAnAdminUpdatingAnUserAccount_whenTheAccountDetailsAreInvalid_thenReturnToAdminAccountFormPage() throws Exception {
-        RequestBuilder request = post ("/admin-edit-user")
+    @WithMockUser(authorities = "A", username = "username1")
+    public void givenAnAdminEndUsersDeletesAnEndUserAndAnotherAdminEndUserDeletesTheSameEndUser_whenRequestingAdminDeleteUser_thenReturnToAdminPageWithUserAlreadyDeletedMessage() throws Exception {
+        RequestBuilder request = post("/admin-delete-user")
                 .with(csrf())
-                .param("accountID", "1")
+                .param("endUserID", "2");
+
+        EndUser stubbedAdminEndUser = new Admin(1L, "forename1", "surname1", "username1", "email@eamil.com1", "password1");
+        when(endUserService.getEndUser(anyString())).thenReturn(stubbedAdminEndUser);
+        when(endUserService.getEndUser(anyLong())).thenReturn(null);
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attribute("error", is("User does not exist or has already been deleted.")));
+        verify(endUserService).getEndUser("username1");
+        verify(endUserService).getEndUser(2L);
+        verifyNoMoreInteractions(endUserService);
+    }
+
+    //Test editUser()
+
+    @Test
+    @WithMockUser(authorities = "A")
+    public void givenAnAdminEndUserSelectsAnEndUserForTheirDetailsToBeEdited_whenRequestingAdminEditUser_thenReturnAdminAccountFormViewWithExistingEndUserDetails() throws Exception {
+        RequestBuilder request = get("/admin-edit-user")
+                .param("endUserID", "1")
+                .with(csrf());
+
+        EndUser stubbedEndUser = new Admin(1L, "forename1", "surname1", "username1", "email@email.com1", "password1");
+        EndUserForm stubbedEndUserForm = new EndUserForm();
+        stubbedEndUserForm.setForename("forename1");
+        stubbedEndUserForm.setSurname("surname1");
+        stubbedEndUserForm.setUsername("username1");
+        stubbedEndUserForm.setEmail("email@email.com1");
+        stubbedEndUserForm.setPassword("password1");
+        stubbedEndUserForm.setRole(Role.ADMIN);
+        when(endUserService.getEndUser(anyLong())).thenReturn(stubbedEndUser);
+        when(endUserFormService.convertToEndUserForm(any())).thenReturn(stubbedEndUserForm);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin-account-form.jsp"))
+                .andExpect(view().name("admin-account-form"))
+                .andExpect(model().attribute("endUserID", is("1")))
+                .andExpect(model().attribute("endUser", hasProperty("forename", is("forename1"))))
+                .andExpect(model().attribute("endUser", hasProperty("surname", is("surname1"))))
+                .andExpect(model().attribute("endUser", hasProperty("username", is("username1"))))
+                .andExpect(model().attribute("endUser", hasProperty("email", is("email@email.com1"))))
+                .andExpect(model().attribute("endUser", hasProperty("password", is("password1"))))
+                .andExpect(model().attribute("endUser", hasProperty("role", is(Role.ADMIN))));
+        verify(endUserService).getEndUser(1L);
+    }
+
+    //Test updateUser
+
+    @Test
+    @WithMockUser(authorities = "A", username = "username")
+    public void givenAnAdminEndUserUpdatingAnEndUserAfterEditingTheirDetailsWithValidValues_whenRequestingAdminEditUser_thenUpdateEndUserDetailsAndRedirectToAdminPage() throws Exception {
+        RequestBuilder request = post("/admin-edit-user")
+                .param("endUserID", "1")
+                .param("forename", "forename")
+                .param("surname", "surname")
+                .param("username", "username")
+                .param("email", "email@email.com")
+                .param("password", "password")
+                .param("role", Role.ADMIN.toString())
+                .with(csrf());
+
+        EndUser stubbedEndUser = new Admin(1L, "forename", "surname", "username", "email@email.com", "password");
+        when(endUserFormService.convertToEndUser(any())).thenReturn(stubbedEndUser);
+
+        mockMvc.perform(request)
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/admin"));
+        verify(endUserFormService).convertToEndUser(any());
+        verify(endUserService).editEndUser(stubbedEndUser);
+    }
+
+    @Test
+    @WithMockUser(authorities = "A", username = "username")
+    public void givenAnAdminEndUserUpdatingAnEndUserWithInvalidDetails_whenRequestingAdminEditUser_thenDoNotUpdateEndUserAndReturnToAdminAccountFormView() throws Exception {
+        RequestBuilder request = post("/admin-edit-user")
+                .param("endUserID", "1")
                 .param("forename", "forename")
                 .param("surname", "")
                 .param("username", "username")
                 .param("email", "email@email.com")
                 .param("password", "")
-                .param("role", Role.ADMINISTRATOR.toString());
+                .param("role", Role.ADMIN.toString())
+                .with(csrf());
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin-account-form.jsp"))
                 .andExpect(view().name("admin-account-form"))
-                .andExpect(model().attribute("accountID", is(1L)))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is(""))))
-                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account", hasProperty("password", is(""))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
-        verifyNoInteractions(accountService);
-        verifyNoInteractions(accountFormService);
+                .andExpect(model().attribute("endUserID", is(1L)))
+                .andExpect(model().attribute("endUser", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("endUser", hasProperty("surname", is(""))))
+                .andExpect(model().attribute("endUser", hasProperty("username", is("username"))))
+                .andExpect(model().attribute("endUser", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("endUser", hasProperty("password", is(""))))
+                .andExpect(model().attribute("endUser", hasProperty("role", is(Role.ADMIN))));
+        verifyNoInteractions(endUserService);
+        verifyNoInteractions(endUserFormService);
     }
 
     @Test
-    @WithMockUser(roles = "A", username = "username")
-    public void givenAnAdminUpdatingAnUserAccount_whenTheUsernameAlreadyExistAndBelongsToTheSameAccount_thenUpdateAccountAndReturnToAdminPage() throws Exception {
-        RequestBuilder request = post ("/admin-edit-user")
+    @WithMockUser(authorities = "A", username = "username")
+    public void givenAnAdminEndUserUpdatingAnEndUserDetailsAndTheUsernameAlreadyExistButBelongToTheSameEndUser_whenRequestingAdminEditUser_thenUpdateEndUserAndRedirectToAdminPage() throws Exception {
+        RequestBuilder request = post("/admin-edit-user")
                 .with(csrf())
-                .param("accountID", "5")
+                .param("endUserID", "5")
                 .param("forename", "forename")
                 .param("surname", "surname")
                 .param("username", "oldUsername")
                 .param("email", "email@email.com")
                 .param("password", "password")
-                .param("role", Role.ADMINISTRATOR.toString());
+                .param("role", Role.ADMIN.toString());
 
-        Account oldAccount = new Account(5L, "oldForename", "oldSurname", "oldUsername", "oldEmail@email.com", "oldPassword", Role.ADMINISTRATOR);
-        when(accountService.getAnAccount(anyString())).thenReturn(oldAccount);
-
-        Account stubbedAccount = new Account(5L, "forename", "surname", "oldUsername", "email@email.com", "password", Role.ADMINISTRATOR);
-        when(accountFormService.makeIntoAccount(any())).thenReturn(stubbedAccount);
+        EndUser oldEndUserDetails = new Admin(5L, "oldForename", "oldSurname", "oldUsername", "oldEmail@email.com", "oldPassword");
+        when(endUserService.getEndUser(anyString())).thenReturn(oldEndUserDetails);
+        EndUser newEndUserDetails = new Admin(5L, "forename", "surname", "oldUsername", "email@email.com", "password");
+        when(endUserFormService.convertToEndUser(any())).thenReturn(newEndUserDetails);
 
         mockMvc.perform(request)
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/admin"));
-        verify(accountService).getAnAccount("oldUsername");
-        verify(accountFormService).makeIntoAccount(any());
-        verify(accountService).updateAccount(stubbedAccount);
+        verify(endUserService).getEndUser("oldUsername");
+        verify(endUserFormService).convertToEndUser(any());
+        verify(endUserService).editEndUser(newEndUserDetails);
     }
 
     @Test
-    @WithMockUser(roles = "A", username = "username")
-    public void givenAnAdminUpdatingAnUserAccount_whenTheUsernameAlreadyExistAndBelongsToAnotherAccount_thenReturnToAdminAccountFormPage() throws Exception {
-        RequestBuilder request = post ("/admin-edit-user")
+    @WithMockUser(authorities = "A", username = "username")
+    public void givenAnAdminEndUserUpdatingAnEndUserDetailsAndTheUsernameAlreadyExistButDoesNotBelongToTheSameEndUser_whenRequestingAdminEditUser_thenDoNotUpdateEndUserAndReturnToAdminAccountFormView() throws Exception {
+        RequestBuilder request = post("/admin-edit-user")
                 .with(csrf())
-                .param("accountID", "1")
+                .param("endUserID", "1")
                 .param("forename", "forename")
                 .param("surname", "surname")
                 .param("username", "username2")
                 .param("email", "email@email.com")
                 .param("password", "password")
-                .param("role", Role.ADMINISTRATOR.toString());
+                .param("role", Role.ADMIN.toString());
 
-        Account anotherAccount = new Account(2L, "forename2", "surname2", "username2", "email@eamil.com2", "password2", Role.INSTRUCTOR);
-        when(accountService.getAnAccount(anyString())).thenReturn(anotherAccount);
+        EndUser anotherEndUser = new Instructor(2L, "forename2", "surname2", "username2", "email@eamil.com2", "password2");
+        when(endUserService.getEndUser(anyString())).thenReturn(anotherEndUser);
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin-account-form"))
-                .andExpect(model().attribute("accountID", is(1L)))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account", hasProperty("username", is("username2"))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
-                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
-        verify(accountService).getAnAccount("username2");
-        verifyNoMoreInteractions(accountService);
-        verifyNoInteractions(accountFormService);
+                .andExpect(model().attribute("endUserID", is(1L)))
+                .andExpect(model().attribute("endUser", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("endUser", hasProperty("surname", is("surname"))))
+                .andExpect(model().attribute("endUser", hasProperty("username", is("username2"))))
+                .andExpect(model().attribute("endUser", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("endUser", hasProperty("password", is("password"))))
+                .andExpect(model().attribute("endUser", hasProperty("role", is(Role.ADMIN))));
+        verify(endUserService).getEndUser("username2");
+        verifyNoMoreInteractions(endUserService);
+        verifyNoInteractions(endUserFormService);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    @Test
+//    @WithMockUser(authorities = "A")
+//    public void givenAdminEndUserCreatesANewUserWithEmptyUsername_whenRequestingAddNewUser_thenReturnBackToAdminAddUserViewWithSameFormEntry() throws Exception {
+//        RequestBuilder request = post("/admin-add-user")
+//                .param("forename", "forename")
+//                .param("surname", "surname")
+//                .param("username", "")
+//                .param("email", "email@email.com")
+//                .param("password", "password")
+//                .param("role", Role.ADMIN.toString())
+//                .with(csrf());
+//
+//        mockMvc.perform(request)
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("admin-account-form"))
+//                .andExpect(model().attributeExists("account"))
+//                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
+//                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
+//                .andExpect(model().attribute("account", hasProperty("username", is(""))))
+//                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
+//                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
+//                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMIN))));
+//        verifyNoInteractions(endUserFormService);
+//        verifyNoInteractions(endUserService);
+//    }
+//
+//    @Test
+//    @WithMockUser(authorities = "A")
+//    public void givenAdminUserCreatesANewUser_whenThePasswordIsBlank_thenReturnBackToAdminAddUserPageWithSameFormEntry() throws Exception {
+//        RequestBuilder request = post("/admin-add-user")
+//                .with(csrf())
+//                .param("forename", "forename")
+//                .param("surname", "surname")
+//                .param("username", "username")
+//                .param("email", "email@email.com")
+//                .param("password", "")
+//                .param("role", Role.ADMIN.toString());
+//
+//        mockMvc.perform(request)
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("admin-account-form"))
+//                .andExpect(model().attributeExists("account"))
+//                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
+//                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
+//                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
+//                .andExpect(model().attribute("account", hasProperty("email", is("email@email.com"))))
+//                .andExpect(model().attribute("account", hasProperty("password", is(""))))
+//                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMIN))));
+//        verifyNoInteractions(accountService);
+//    }
+//
+//
+
+
 }

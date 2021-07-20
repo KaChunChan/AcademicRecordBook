@@ -1,13 +1,17 @@
-DELETE FROM ACCOUNT;
+DELETE FROM ENDUSERS;
 INSERT INTO
-    ACCOUNT (forename, surname, username, email, password, role)
+    ENDUSERS (ENDUSER_TYPE, ID, forename, surname, username, email, password, role)
 VALUES
-    ('James', 'Brown', 'jamesbrown', 'james.brown@email.com', 'james', 'A');
+    ('A', 1, 'forename', 'surname', 'username', 'email@email.com', '{noop}password', 'A');
 INSERT INTO
-    ACCOUNT (forename, surname, username, email, password, role)
+    ENDUSERS (ENDUSER_TYPE, ID, forename, surname, username, email, password, role)
 VALUES
-    ('Mary', 'Hill', 'mary.hill', 'mary.hill@email.com', 'mary', 'I');
+    ('I', 2,'John', 'Doe', 'johndoe', 'john.doe@email.com', '{noop}john', 'I');
 INSERT INTO
-    ACCOUNT (forename, surname, username, email, password, role)
+    ENDUSERS (ENDUSER_TYPE, ID, forename, surname, username, email, password, role)
 VALUES
-    ('Jill', 'Bill', 'jillbill', 'jill.bill@email.com', 'jill', 'S');
+    ('S', 3, 'Jane', 'Smith', 'janesmith', 'jane.smith@email.com', '{noop}jane', 'S');
+INSERT INTO
+    ENDUSERS (ENDUSER_TYPE, ID, forename, surname, username, email, password, role)
+VALUES
+    ('A', 4,'dummyForename', 'dummySurname', 'dummyUsername', 'email@email.com', '{noop}password', 'A');

@@ -2,7 +2,7 @@ package com.kachunchan.academicrecordbook.domain;
 
 public enum Role {
 
-    ADMINISTRATOR("A"),
+    ADMIN("A"),
     INSTRUCTOR("I"),
     STUDENT("S");
 

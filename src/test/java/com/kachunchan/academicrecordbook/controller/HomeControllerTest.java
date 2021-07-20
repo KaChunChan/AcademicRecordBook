@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -21,36 +22,45 @@ public class HomeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private UserDetailsService userDetailsService;
 
+    //Test redirectToLogin
+
     @Test
-    public void givenNoLoggedInUser_whenEnteredHomePage_thenShowLoginPage() throws Exception {
-        mockMvc.perform(get("/academicrecordbook"))
+    public void givenNoLoggedInEndUser_whenRequestingHomePage_thenRedirectToLoginPage() throws Exception {
+        RequestBuilder request = get("/academicrecordbook");
+
+        mockMvc.perform(request)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
 
     @Test
-    public void givenNoLoggedInUser_whenEnteredJustForwardSlashInURL_thenRedirectToLoginPage() throws Exception {
-        mockMvc.perform(get("/"))
+    public void givenNoLoggedInEndUser_whenEnteredJustForwardSlashInURL_thenRedirectToLoginPage() throws Exception {
+        RequestBuilder request = get("/");
+
+        mockMvc.perform(request)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
 
     @Test
     @WithMockUser("username")
-    public void givenAlreadyLoggedInUser_whenEnteredHomePage_thenRedirectToAccountPage() throws Exception {
-        mockMvc.perform(get("/academicrecordbook"))
+    public void givenAlreadyLoggedInEndUser_whenRequestingHomePage_thenRedirectToAccountPage() throws Exception {
+        RequestBuilder request = get("/academicrecordbook");
+
+        mockMvc.perform(request)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/account"));
     }
 
     @Test
     @WithMockUser("username")
-    public void givenAlreadyLoggedInUser_whenEnteredJustForwardSlashInURL_thenRedirectToLoginPage() throws Exception {
-        mockMvc.perform(get("/"))
+    public void givenAlreadyLoggedInEndUser_whenEnteredJustForwardSlashInURL_thenRedirectToLoginPage() throws Exception {
+        RequestBuilder request = get("/");
+
+        mockMvc.perform(request)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/account"));
     }

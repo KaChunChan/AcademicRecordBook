@@ -7,13 +7,13 @@
 </head>
 <body>
     <jsp:include page="header.jsp"/>
-    <p>Hello ${account.forename} ${account.surname}</p>
-    <p>Your username is ${account.username}</p>
-    <p>Your password is ${account.password}</p>
-    <p>Your email is ${account.email}</p>
-    <p>Your are logged in as ${account.role}</p>
+    <p>Hello ${endUser.forename} ${endUser.surname}</p>
+    <p>Your username is ${endUser.username}</p>
+    <p>Your password is ${endUser.password}</p>
+    <p>Your email is ${endUser.email}</p>
+    <p>Your are logged in as ${endUser.role}</p>
 
-    <c:if test="${account.role=='ADMINISTRATOR'}">
+    <c:if test="${endUser.role=='ADMIN'}">
         <a href="/admin"> <button>Admin</button> </a>
     </c:if>
 </body>
