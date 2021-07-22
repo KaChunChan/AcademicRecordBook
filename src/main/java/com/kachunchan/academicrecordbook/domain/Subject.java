@@ -17,5 +17,10 @@ public class Subject {
     private String code;
     @Column
     private String title;
+
+    public Subject(String code, String title) {
+        this.code = code;
+        this.title = title;
+    }
 }
 
