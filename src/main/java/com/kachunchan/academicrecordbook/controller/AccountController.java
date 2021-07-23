@@ -1,6 +1,6 @@
 package com.kachunchan.academicrecordbook.controller;
 
-import com.kachunchan.academicrecordbook.service.AccountService;
+import com.kachunchan.academicrecordbook.service.EndUserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
@@ -15,20 +15,19 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class AccountController {
 
-    private final AccountService accountService;
+    private final EndUserService endUserService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
+    public AccountController(EndUserService endUserService) {
+        this.endUserService = endUserService;
     }
 
-
     @RequestMapping(value = "/account", method = {RequestMethod.GET, RequestMethod.POST})
-    public String showAccountPage(Model model) {
+    public String showAccountView(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw new SessionAuthenticationException("Session user is null");
         }
-        model.addAttribute("account", accountService.getAnAccount(authentication.getName()));
+        model.addAttribute("endUser", endUserService.getEndUser(authentication.getName()));
         return "account";
     }
 

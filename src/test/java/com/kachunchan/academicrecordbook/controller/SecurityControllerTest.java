@@ -2,11 +2,13 @@ package com.kachunchan.academicrecordbook.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -17,49 +19,64 @@ public class SecurityControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private UserDetailsService userDetailsService;
+    @Value("${spring.mvc.view.prefix}")
+    private String prefixView;
+
+    //Test login
 
     @Test
-    public void givenNoPreviousLoginAttempt_whenRedirectedToLogin_thenReturnLoginPageWithNoParameters() throws Exception {
-        mockMvc.perform(get("/login"))
+    public void givenEndUserAccessingLoginPage_whenRequestingLoginPage_thenReturnLoginViewWithNoParameters() throws Exception {
+        RequestBuilder request = get("/login");
+
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(forwardedUrl("/WEB-INF/view/login.jsp"))
+                .andExpect(forwardedUrl(prefixView.toString() + "login.jsp"))
                 .andExpect(view().name("login"))
                 .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(model().attributeDoesNotExist("logout"));
     }
 
     @Test
-    public void givenPreviousUnsuccessfulLoginAttempt_whenRedirectToLogin_thenReturnLoginPageWithErrorParameter() throws Exception {
-        mockMvc.perform(get("/login?error=true"))
+    public void givenEndUserHasPreviousUnsuccessfulLoginAttempts_whenRequestingLoginPage_thenReturnLoginViewWithErrorParameter() throws Exception {
+        RequestBuilder request = get("/login?error=true");
+
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(forwardedUrl("/WEB-INF/view/login.jsp"))
+                .andExpect(forwardedUrl(prefixView.toString() + "login.jsp"))
                 .andExpect(view().name("login"))
                 .andExpect(model().attribute("error", "true"))
                 .andExpect(model().attributeDoesNotExist("logout"));
     }
 
+    //Test logout
+
     @Test
-    public void givenPreviouslySuccessfullyLogout_whenRedirectToLogin_thenReturnLoginPageWithLogoutParameter() throws Exception {
-        mockMvc.perform(get("/login?logout=true"))
+    public void givenEndUserHasSuccessfulLoggedOut_whenRequestingLoginPage_thenReturnLoginViewWithLogoutParameter() throws Exception {
+        RequestBuilder request = get("/login?logout=true");
+
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(forwardedUrl("/WEB-INF/view/login.jsp"))
+                .andExpect(forwardedUrl(prefixView.toString() + "login.jsp"))
                 .andExpect(view().name("login"))
                 .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(model().attribute("logout", "true"));
     }
 
     @Test
-    public void givenManuallyTypeInNonExistingParameters_whenRequestingLogin_thenReturnError302() throws Exception {
-        mockMvc.perform(get("/login?hello=world"))
+    public void givenEndUserManuallyTypeInNonExistingParameters_whenRequestingLoginPage_thenReturnError302() throws Exception {
+        RequestBuilder request = get("/login?hello=world");
+
+        mockMvc.perform(request)
                 .andExpect(status().isFound());
     }
 
     @Test
-    public void givenManuallyTypeInUnexpectedValueToExistingParameters_whenRequestingLogin_thenReturnError302() throws Exception {
-        mockMvc.perform(get("/login?error=helloworld"))
+    public void givenManuallyTypeInUnexpectedValueToExistingParameters_whenRequestingLoginPage_thenReturnError302() throws Exception {
+        RequestBuilder request = get("/login?error=helloworld");
+
+        mockMvc.perform(request)
                 .andExpect(status().isFound());
     }
 }

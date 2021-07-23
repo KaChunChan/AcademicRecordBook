@@ -31,35 +31,35 @@
   <td>Password</td>
   <td>Role</td>
   </thead>
-  <c:forEach items="${accounts}" var="account">
+  <c:forEach items="${endUsers}" var="endUser">
     <tr>
       <td>
-        "${account.forename}"
+        "${endUser.forename}"
       </td>
       <td>
-        "${account.surname}"
+        "${endUser.surname}"
       </td>
       <td>
-        "${account.username}"
+        "${endUser.username}"
       </td>
       <td>
-        "${account.email}"
+        "${endUser.email}"
       </td>
       <td>
-        "${account.password}"
+        "${endUser.password}"
       </td>
       <td>
-        "${account.role}"
+        "${endUser.role}"
       </td>
       <td>
         <form method="get" action="/admin-edit-user">
-          <input type="hidden" name="accountID" value="${account.id}"/>
+          <input type="hidden" name="endUserID" value="${endUser.id}"/>
           <input type="submit" value="Edit" >
         </form>
       </td>
       <td>
         <form method="post" action="/admin-delete-user">
-          <input type="hidden" name="accountID" value="${account.id}"/>
+          <input type="hidden" name="endUserID" value="${endUser.id}"/>
           <input type="submit" value="Delete" >
         </form>
       </td>

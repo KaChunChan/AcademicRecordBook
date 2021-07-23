@@ -7,11 +7,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@ToString
-public class AccountForm {
+public class EndUserForm {
 
     @NotBlank(message = "Forename cannot be blank.")
     @Size(min = 1, max = 30, message = "Forename must be at least 1 character and up to 30 characters.")
@@ -49,7 +47,7 @@ public class AccountForm {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AccountForm that = (AccountForm) o;
+        EndUserForm that = (EndUserForm) o;
 
         if (forename != null ? !forename.equals(that.forename) : that.forename != null) return false;
         if (surname != null ? !surname.equals(that.surname) : that.surname != null) return false;

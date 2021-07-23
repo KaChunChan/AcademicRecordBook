@@ -4,18 +4,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Account Form</title>
+    <title>User Form</title>
 </head>
 <body>
     <jsp:include page="header.jsp"/>
-    <p>Account Form</p>
+    <p>User Form</p>
 
     <c:set var="action" value="/admin-add-user"/>
-    <c:if test="${not empty accountID}">
+    <c:if test="${not empty endUserID}">
         <c:set var="action" value="/admin-edit-user"/>
     </c:if>
 
-    <form:form method="post" action="${action}" modelAttribute="account">
+    <form:form method="post" action="${action}" modelAttribute="endUser">
         <table>
             <tr>
                 <td>
@@ -55,7 +55,7 @@
                 </td>
             </tr>
         </table>
-        <input type="hidden" name="accountID" value="${accountID}"/>
+        <input type="hidden" name="endUserID" value="${endUserID}"/>
         <input type="submit" value="Submit" />
     </form:form>
     <a href="/admin">

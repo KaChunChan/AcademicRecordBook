@@ -1,21 +1,25 @@
 package com.kachunchan.academicrecordbook.controller;
 
-import com.kachunchan.academicrecordbook.domain.Account;
+import com.kachunchan.academicrecordbook.domain.Admin;
+import com.kachunchan.academicrecordbook.domain.EndUser;
 import com.kachunchan.academicrecordbook.domain.Role;
-import com.kachunchan.academicrecordbook.service.AccountServiceImpl;
+import com.kachunchan.academicrecordbook.service.EndUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -27,36 +31,58 @@ public class AccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
-    private AccountServiceImpl accountService;
+    private EndUserService endUserService;
     @MockBean
     private UserDetailsService userDetailsService;
+    @Value("${spring.mvc.view.prefix}")
+    private String prefixView;
+
+    //Test showAccountView()
 
     @Test
     @WithMockUser("username")
     @AutoConfigureMockMvc(addFilters = false)
-    public void givenAlreadyLoggedInUser_whenGoingToAccountPageUsingGet_thenReturnAccountDetails() throws Exception {
-        Account stubAccount = new Account(1L, "forename", "surname", "username", "email", "password", Role.ADMINISTRATOR);
-        when(accountService.getAnAccount(SecurityContextHolder.getContext().getAuthentication().getName())).thenReturn(stubAccount);
-        mockMvc.perform(get("/account"))
+    public void givenAlreadyLoggedInEndUser_whenRequestingAccountPage_thenReturnAccountViewWithRetrievedEndUserDetails() throws Exception {
+        RequestBuilder request = get("/account");
+
+        EndUser stubbedEndUser = new Admin(1L, "forename", "surname", "username", "email@email.com", "password");
+        when(endUserService.getEndUser(anyString())).thenReturn(stubbedEndUser);
+
+        mockMvc.perform(request)
                 .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "account.jsp"))
                 .andExpect(view().name("account"))
-                .andExpect(forwardedUrl("/WEB-INF/view/account.jsp"))
-                .andExpect(model().attribute("account", hasProperty("id", is(1L))))
-                .andExpect(model().attribute("account", hasProperty("forename", is("forename"))))
-                .andExpect(model().attribute("account", hasProperty("surname", is("surname"))))
-                .andExpect(model().attribute("account", hasProperty("username", is("username"))))
-                .andExpect(model().attribute("account", hasProperty("email", is("email"))))
-                .andExpect(model().attribute("account", hasProperty("password", is("password"))))
-                .andExpect(model().attribute("account", hasProperty("role", is(Role.ADMINISTRATOR))));
+                .andExpect(model().attribute("endUser", hasProperty("id", is(1L))))
+                .andExpect(model().attribute("endUser", hasProperty("forename", is("forename"))))
+                .andExpect(model().attribute("endUser", hasProperty("surname", is("surname"))))
+                .andExpect(model().attribute("endUser", hasProperty("username", is("username"))))
+                .andExpect(model().attribute("endUser", hasProperty("email", is("email@email.com"))))
+                .andExpect(model().attribute("endUser", hasProperty("password", is("password"))))
+                .andExpect(model().attribute("endUser", hasProperty("role", is(Role.ADMIN))));
+        verify(endUserService).getEndUser("username");
     }
 
+    //Test handleSessionAuthenticationException()
+
     @Test
-    public void givenNotLoggedInUser_whenManuallyEnteringAccountPageUsingGet_thenRedirectToLoginPage() throws Exception {
-        mockMvc.perform(get("/account"))
+    public void givenNonLoggedInEndUser_whenManuallyEnteringAccountPage_thenRedirectToLoginPage() throws Exception {
+        RequestBuilder request = get("/account");
+
+        mockMvc.perform(request)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("http://localhost/login"));
     }
 
+    //Test redirectToAccountPage()
+
+    @Test
+    @WithMockUser("username")
+    public void givenAlreadyLoggedInEndUser_whenDirectedToAccountPage_thenRedirectToAccountPage() throws Exception {
+        RequestBuilder request = get("/to-account");
+
+        mockMvc.perform(request)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/account"));
+    }
 }
