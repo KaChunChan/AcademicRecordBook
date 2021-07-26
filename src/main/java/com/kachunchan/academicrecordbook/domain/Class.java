@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -21,4 +22,11 @@ public class Class {
     private Instructor instructor;
     @ElementCollection
     private Set<Student> students;
+
+    public Class(String code, Subject subject) {
+        this.code = code;
+        this.subject = subject;
+        this.instructor = null;
+        this.students = new HashSet<>();
+    }
 }
