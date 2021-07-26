@@ -18,6 +18,9 @@
 <form:form method="GET" action="/admin-add-user">
   <input type="submit" value="Add New User">
 </form:form>
+<form:form method="GET" action="/admin-subjects">
+  <input type="submit" value="View Subjects">
+</form:form>
 
 <form:form method="GET" action="/">
   <input type="submit" value="Back To Account">

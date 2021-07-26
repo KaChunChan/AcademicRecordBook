@@ -35,7 +35,6 @@ public class AdminController {
         return "admin";
     }
 
-    //TODO - Integration test to see if we need @ModelAttribute
     @GetMapping("/admin-add-user")
     public String getAdminAddUserPage(@ModelAttribute("endUser") EndUserForm endUserForm, Model model) {
         model.addAttribute("availableRoles", availableRoles);
