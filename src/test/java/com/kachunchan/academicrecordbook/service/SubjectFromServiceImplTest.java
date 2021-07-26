@@ -35,11 +35,11 @@ public class SubjectFromServiceImplTest {
     public void givenASubject_whenConvertToSubjectFormHasBeenInvoked_thenReturnSubjectForm() {
         Subject subject = new Subject("MM101", "Mathematics Level 1");
 
-        SubjectForm expectedSubjectFrom = new SubjectForm();
-        expectedSubjectFrom.setCode("MM101");
-        expectedSubjectFrom.setTitle("Mathematics Level 1");
+        SubjectForm expectedSubjectForm = new SubjectForm();
+        expectedSubjectForm.setCode("MM101");
+        expectedSubjectForm.setTitle("Mathematics Level 1");
         SubjectForm actualSubjectForm = subjectFormService.convertToSubjectForm(subject);
 
-        assertEquals(expectedSubjectFrom, actualSubjectForm);
+        assertEquals(expectedSubjectForm, actualSubjectForm);
     }
 }
