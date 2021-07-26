@@ -12,6 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -30,11 +32,12 @@ public class ClassController {
     }
 
     @GetMapping("/admin-classes")
-    public String getAdminClassesPage(@ModelAttribute("classForm") ClassForm classForm, Model model) {
+    public String getAdminClassesPage(@ModelAttribute("classForm") ClassForm classForm, @ModelAttribute("error") String error, Model model) {
         List<Class> classes = classService.getAllClass();
         List<Subject> subjects = subjectService.getAllSubject();
         model.addAttribute("classes", classes);
         model.addAttribute("subjects", subjects);
+        model.addAttribute("error", error);
         return "admin-classes";
     }
 
@@ -53,5 +56,17 @@ public class ClassController {
         }
         classService.addClass(classFormService.convertToClass(classForm));
         return "redirect:/admin-classes";
+    }
+
+    @GetMapping("/admin-view-class")
+    public String viewClass(@RequestParam("code") String code, Model model, RedirectAttributes redirectAttributes) {
+        Class classs = classService.getClass(code);
+        if(classs == null) {
+            String errorMessage = "Class has been changed or deleted.";
+            redirectAttributes.addFlashAttribute("error", errorMessage);
+            return "redirect:/admin-classes";
+        }
+        model.addAttribute("class", classs);
+        return "admin-view-class";
     }
 }

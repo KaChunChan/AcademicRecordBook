@@ -19,7 +19,10 @@
   <input type="submit" value="Add New User">
 </form:form>
 <form:form method="GET" action="/admin-subjects">
-  <input type="submit" value="View Subjects">
+  <input type="submit" value="Subjects">
+</form:form>
+<form:form method="GET" action="/admin-classes">
+  <input type="submit" value="Classes">
 </form:form>
 
 <form:form method="GET" action="/">
