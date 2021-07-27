@@ -47,7 +47,7 @@ public class ClassController {
         List<Subject> subjects = subjectService.getAllSubject();
         model.addAttribute("classes", classes);
         model.addAttribute("subjects", subjects);
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "admin-classes";
         }
         if (classService.getClass(classForm.getCode()) != null) {
@@ -61,12 +61,45 @@ public class ClassController {
     @GetMapping("/admin-view-class")
     public String viewClass(@RequestParam("code") String code, Model model, RedirectAttributes redirectAttributes) {
         Class classs = classService.getClass(code);
-        if(classs == null) {
+        if (classs == null) {
             String errorMessage = "Class has been changed or deleted.";
             redirectAttributes.addFlashAttribute("error", errorMessage);
             return "redirect:/admin-classes";
         }
         model.addAttribute("class", classs);
         return "admin-view-class";
+    }
+
+    @GetMapping("/admin-edit-class")
+    public String editClass(@RequestParam("code") String code, Model model, RedirectAttributes redirectAttributes) {
+        Class classs = classService.getClass(code);
+        if (classs == null) {
+            String errorMessage = "Class has been changed or deleted.";
+            redirectAttributes.addFlashAttribute("error", errorMessage);
+            return "redirect:/admin-classes";
+        }
+        ClassForm classForm = classFormService.convertToClassForm(classs);
+        model.addAttribute("classForm", classForm);
+        return "admin-edit-class";
+    }
+
+    @PostMapping("/admin-update-class")
+    public String updateClass(@Valid @ModelAttribute("classForm") ClassForm classForm, @RequestParam("classCode") String classCode, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "admin-edit-class";
+        }
+        Class existingClass = classService.getClass(classForm.getCode());
+        if (existingClass != null && !existingClass.getCode().equals(classCode)) {
+            String errorMessage = "Class ID Code already exists.";
+            model.addAttribute("error", errorMessage);
+            return "admin-edit-class";
+        }
+        if (classForm.getCode().equals(classCode)) {
+            classService.editClass(classFormService.convertToClass(classForm));
+        } else {
+            classService.addClass(classFormService.convertToClass(classForm));
+            classService.deleteClass(classCode);
+        }
+        return "redirect:/admin-classes";
     }
 }

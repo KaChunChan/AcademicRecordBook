@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ClassController.class)
 @TestPropertySource(locations = "classpath:test.properties")
+@WithMockUser(authorities = "A")
 public class ClassControllerTest {
 
     @Autowired
@@ -49,7 +50,6 @@ public class ClassControllerTest {
     //Test getAdminClassesPage()
 
     @Test
-    @WithMockUser(authorities = "A")
     public void givenAdminEndUser_whenRequestingClassesPage_thenReturnClassesViewWithAListOfExistingClassesAndAListOfAllExistingSubjects() throws Exception {
         RequestBuilder request = get("/admin-classes").with(csrf());
 
@@ -87,7 +87,6 @@ public class ClassControllerTest {
     //Test addNewClass()
 
     @Test
-    @WithMockUser(authorities = "A")
     public void givenAdminEndUserAddingNewNonExistingClass_whenRequestingAddNewClass_thenAddClassAndRedirectToAdminClassesPage() throws Exception {
         RequestBuilder request = post("/admin-classes-add-class")
                 .param("code", "MM1010202001")
@@ -110,7 +109,6 @@ public class ClassControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "A")
     public void givenAdminEndUserAddingClassThatAlreadyExist_whenRequestingAddNewClass_thenDoNotAddClassAndRedirectToAdminClassesPageWithErrorMessage() throws Exception {
         RequestBuilder request = post("/admin-classes-add-class")
                 .param("code", "MM1010202001")
@@ -157,7 +155,6 @@ public class ClassControllerTest {
     //Test viewClass()
 
     @Test
-    @WithMockUser(authorities = "A")
     public void givenAdminEndUserSelectedAClassToView_whenRequestingViewClassPage_thenReturnAdminClassViewWithTheClassDetails() throws Exception {
         RequestBuilder request = get("/admin-view-class")
                 .param("code", "MM1010202101")
@@ -177,7 +174,6 @@ public class ClassControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "A")
     public void givenAdminEndUserSelectedAClassToViewButHasBeenSimultaneouslyDeletedOrModified_whenRequestingViewClassPage_thenReturnToAdminClassPageWithError() throws Exception {
         RequestBuilder request = get("/admin-view-class")
                 .param("code", "MM1010202101")
@@ -192,7 +188,6 @@ public class ClassControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "A")
     public void givenAdminEndUserSelectedAClassToViewButHasBeenSimultaneouslyDeletedOrModified_whenRedirectedToAdminClassPage_thenReturnTheUsualClassesViewWithErrorMessage() throws Exception {
         RequestBuilder request = get("/admin-classes")
                 .flashAttr("error", "Class has been changed or deleted.")
@@ -228,5 +223,121 @@ public class ClassControllerTest {
                 .andExpect(model().attribute("error", "Class has been changed or deleted."));
         verify(classService).getAllClass();
         verify(subjectService).getAllSubject();
+    }
+
+    //Test editClass()
+
+    @Test
+    public void givenAdminEndUserSelectEditOnAdminClassesPage_whenRequestingEditClassPage_thenReturnToEditClassViewWithSelectClassDetails() throws Exception {
+        RequestBuilder request = get("/admin-edit-class")
+                .param("code", "MM1010202101")
+                .with(csrf());
+        Subject stubbedSubject = new Subject("MM101", "Mathematics Level 1");
+        Class stubbedClass = new Class("MM1010202101", stubbedSubject);
+        ClassForm stubbedClassForm = new ClassForm();
+        stubbedClassForm.setCode("MM1010202101");
+        stubbedClassForm.setSubject(stubbedSubject);
+        when(classService.getClass(anyString())).thenReturn(stubbedClass);
+        when(classFormService.convertToClassForm(any(Class.class))).thenReturn(stubbedClassForm);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin-edit-class.jsp"))
+                .andExpect(view().name("admin-edit-class"))
+                .andExpect(model().attribute("classForm", hasProperty("code", is("MM1010202101"))))
+                .andExpect(model().attribute("classForm", hasProperty("subject", hasProperty("code", is("MM101")))))
+                .andExpect(model().attribute("classForm", hasProperty("subject", hasProperty("title", is("Mathematics Level 1")))))
+                .andExpect(model().attribute("classForm", hasProperty("instructor", nullValue())))
+                .andExpect(model().attribute("classForm", hasProperty("students", nullValue())));
+        verify(classService).getClass("MM1010202101");
+        verify(classFormService).convertToClassForm(any(Class.class));
+    }
+
+    @Test
+    public void givenAdminEndUserSelectEditOnAdminClassesPageButHasBeenSimultaneouslyDeletedOrModified_whenRequestingEditClassPage_thenReturnToAdminClassPageWithError() throws Exception {
+        RequestBuilder request = get("/admin-edit-class")
+                .param("code", "MM1010202101")
+                .with(csrf());
+        when(classService.getClass(anyString())).thenReturn(null);
+
+        mockMvc.perform(request)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin-classes"))
+                .andExpect(flash().attribute("error", "Class has been changed or deleted."));
+        verify(classService).getClass("MM1010202101");
+        verifyNoInteractions(classFormService);
+    }
+
+    //Test updateClass()
+
+    @Test
+    public void givenAdminEndUserModifiesClassButClassCodeDoesNotChange_whenRequestingUpdateClassPage_thenUpdateClassAndReturnToAdminClassView() throws Exception {
+        RequestBuilder request = post("/admin-update-class")
+                .param("classCode", "MM1010202101")
+                .param("code", "MM1010202101")
+                .param("subject.code", "MM101")
+                .param("subject.title", "Mathematics Level 1")
+                .with(csrf());
+
+        Subject stubbedSubject = new Subject("MM101", "Mathematics Level 1");
+        Class stubbedClass = new Class("MM1010202101", stubbedSubject);
+        when(classService.getClass(anyString())).thenReturn(stubbedClass);
+        when(classFormService.convertToClass(any(ClassForm.class))).thenReturn(stubbedClass);
+        when(classService.editClass(any(Class.class))).thenReturn(stubbedClass);
+
+        mockMvc.perform(request)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin-classes"));
+        verify(classService).getClass("MM1010202101");
+        verify(classFormService).convertToClass(any(ClassForm.class));
+        verify(classService).editClass(any(Class.class));
+    }
+
+    @Test
+    public void givenAdminEndUserModifiesClassButClassCodeWasChanged_whenRequestingUpdateClassPage_thenUpdateClassAndReturnToAdminClassView() throws Exception {
+        RequestBuilder request = post("/admin-update-class")
+                .param("classCode", "MM1010202101")
+                .param("code", "MM1010202102")
+                .param("subject.code", "MM101")
+                .param("subject.title", "Mathematics Level 1")
+                .with(csrf());
+
+        Subject stubbedSubject = new Subject("MM101", "Mathematics Level 1");
+        Class stubbedClass = new Class("MM1010202102", stubbedSubject);
+        when(classService.getClass(anyString())).thenReturn(null);
+        when(classFormService.convertToClass(any(ClassForm.class))).thenReturn(stubbedClass);
+        when(classService.addClass(any(Class.class))).thenReturn(stubbedClass);
+
+        mockMvc.perform(request)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin-classes"));
+        verify(classService).getClass("MM1010202102");
+        verify(classFormService).convertToClass(any(ClassForm.class));
+        verify(classService).addClass(any(Class.class));
+        verify(classService).deleteClass("MM1010202101");
+
+    }
+
+    @Test
+    public void givenAdminEndUserModifiesClassButClassCodeWasChangedAndMatchesAnotherExistingClass_whenRequestingUpdateClassPage_thenDoNotUpdateAndReturnToAdminClassPageWithError() throws Exception {
+        RequestBuilder request = post("/admin-update-class")
+                .param("classCode", "MM1010202101")
+                .param("code", "MM1010202102")
+                .param("subject.code", "MM101")
+                .param("subject.title", "Mathematics Level 1")
+                .with(csrf());
+
+        Subject stubbedSubject = new Subject("MM101", "Mathematics Level 1");
+        Class stubbedClass = new Class("MM1010202102", stubbedSubject);
+        when(classService.getClass(anyString())).thenReturn(stubbedClass);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl(prefixView + "admin-edit-class.jsp"))
+                .andExpect(view().name("admin-edit-class"))
+                .andExpect(model().attribute("error", is("Class ID Code already exists.")));
+        verify(classService).getClass("MM1010202102");
+        verifyNoMoreInteractions(classService);
+        verifyNoInteractions(classFormService);
     }
 }

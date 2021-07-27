@@ -62,7 +62,13 @@
             <td>
                 <form method="get" action="/admin-view-class">
                     <input type="hidden" name="code" value="${class.code}"/>
-                    <input type="submit" value="View" >
+                    <input type="submit" value="View"/>
+                </form>
+            </td>
+            <td>
+                <form method="get" action="/admin-edit-class">
+                    <input type="hidden" name="code" value="${class.code}"/>
+                    <input type="submit" value="Edit"/>
                 </form>
             </td>
         </tr>
