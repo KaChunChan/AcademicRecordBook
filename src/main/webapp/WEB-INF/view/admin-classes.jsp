@@ -8,13 +8,16 @@
 </head>
 <body>
 <jsp:include page="header.jsp"/>
-<p>All Classes</p>
 
+<form:form method="GET" action="/admin">
+    <input type="submit" value="Go Back">
+</form:form>
+
+<h1>Add Class</h1>
 <c:set var="error" value="${error}"/>
 <c:if test="${not empty error}">
     <p>${error}</p>
 </c:if>
-
 <form:form method="POST" action="/admin-classes-add-class" modelAttribute="classForm">
     <table>
         <tr>
@@ -40,10 +43,9 @@
     </table>
     <input type="submit" value="Add Class"/>
 </form:form>
-<form:form method="GET" action="/admin">
-    <input type="submit" value="Cancel">
-</form:form>
 
+<br>
+<h1>All Classes</h1>
 <table>
     <thead>
     <td>Code</td>
@@ -56,6 +58,12 @@
             </td>
             <td>
                 ${class.subject.code} ${class.subject.title}
+            </td>
+            <td>
+                <form method="get" action="/admin-view-class">
+                    <input type="hidden" name="code" value="${class.code}"/>
+                    <input type="submit" value="View" >
+                </form>
             </td>
         </tr>
     </c:forEach>
