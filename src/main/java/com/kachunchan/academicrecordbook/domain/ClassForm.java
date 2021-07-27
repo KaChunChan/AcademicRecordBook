@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +21,8 @@ public class ClassForm {
 
     @NotNull(message = "Subject must be selected.")
     private Subject subject;
+
+    private Instructor instructor;
+
+    private Set<Student> students;
 }
